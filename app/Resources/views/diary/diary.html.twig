@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>My Diary</h1>
+    <div>
+        <span>Date: {{ dateTime | date }}</span><br>
+        <span>Text: {{ note }}</span>
+    </div>
+{% endblock %}

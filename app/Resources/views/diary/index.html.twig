@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    My Diary
+{% endblock %}
+
+{% block body %}
+    <table>
+        <thead>
+        <tr>
+            <th>Date and time</th>
+            <th>Note</th>
+            <th>Category</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for diaryEntry in diaryEntries %}
+            <tr>
+                <td>{{ diaryEntry.datetime | date("Y-m-d h:i") }}</td>
+                <td>{{ diaryEntry.note }}</td>
+                <td>{{ diaryEntry.category }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
