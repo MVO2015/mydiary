@@ -3,7 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\DiaryEntry;
-use AppBundle\Form\DiaryEntryType;
+use AppBundle\Form\AddDiaryEntryType;
+use AppBundle\Form\EditDiaryEntryType;
 use DateTime;
 use DateTimeZone;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -40,23 +41,22 @@ class DiaryController extends Controller
     public function addAction(Request $request)
     {
         $entry = new DiaryEntry(new DateTime("now", new DateTimeZone("Europe/Prague")), "my diary entry", "diary");
-        $form = $this->createForm(DiaryEntryType::class, $entry);
+        $form = $this->createForm(AddDiaryEntryType::class, $entry);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
-            $diaryEntry = $form->getData();
-            $this->addFlash(
-                'success',
-                'Your entry "' . $diaryEntry->getNote() . '" was saved!'
-            );
+            if ($form->get('save')->isClicked()) {
+                $diaryEntry = $form->getData();
+                $this->addFlash(
+                    'success',
+                    'Your entry "' . $diaryEntry->getNote() . '" was saved!'
+                );
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entry);
-            $em->flush();
-
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($entry);
+                $em->flush();
+            }
             return $this->redirectToRoute("index");
         }
 
@@ -66,39 +66,30 @@ class DiaryController extends Controller
     }
 
     /**
-     * @Route("/success", name="diary_success")
-     * @param Request $request
-     * @return Response
-     */
-    public function successAction(Request $request)
-    {
-        return $this->render('diary/success.html.twig');
-    }
-
-    /**
-     * @Route("/update", name="update")
+     * @Route("/edit/{id}", name="edit")
      * @param Request $request
      * @param int $id Diary entry id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function updateAction(Request $request, $id)
+    public function editAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-        $form = $this->createForm(DiaryEntryType::class, $diaryEntry);
+        $form = $this->createForm(EditDiaryEntryType::class, $diaryEntry);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $diaryEntry = $form->getData();
-            $this->addFlash(
-                'success',
-                'Your entry "' . $diaryEntry->getNote() . '" was updated!'
-            );
-            $em->flush();
-
+            if ($form->get('update')->isClicked()) {
+                $diaryEntry = $form->getData();
+                $this->addFlash(
+                    'success',
+                    'Your entry "' . $diaryEntry->getNote() . '" was updated!'
+                );
+                $em->flush();
+            }
             return $this->redirectToRoute("index");
         }
-        return $this->render('diary/add.html.twig', array(
+        return $this->render('diary/edit.html.twig', array(
             'form' => $form->createView(),
         ));
 
@@ -122,7 +113,7 @@ class DiaryController extends Controller
     public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $diaryEntries = $em->getRepository('AppBundle:DiaryEntry')->findAll();
+        $diaryEntries = $em->getRepository('AppBundle:DiaryEntry')->findAllDesc();
         return $this->render(
             'diary/index.html.twig',
             ['diaryEntries' => $diaryEntries]

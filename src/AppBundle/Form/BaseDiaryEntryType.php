@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DiaryEntryType extends AbstractType
+class BaseDiaryEntryType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -22,7 +22,11 @@ class DiaryEntryType extends AbstractType
                 'input' => 'datetime'))
             ->add('note', TextareaType::class, array('label' => "Note: "))
             ->add('category', TextType::class, array('label' => 'Category: ') )
-            ->add('save', SubmitType::class, ['attr' => array('class' => 'btn btn-lg btn-success')])
+            ->add('cancel', SubmitType::class, [
+                    'validation_groups' => false,
+                    'attr' => ['class' => "btn btn-lg btn-default"],
+                ]
+            )
         ;
     }
 

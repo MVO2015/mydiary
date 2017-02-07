@@ -14,7 +14,7 @@
         </thead>
         <tbody>
         {% for diaryEntry in diaryEntries %}
-            <tr>
+            <tr onclick="window.location.href='{{ path('edit', {'id': diaryEntry.id}) }}';">
                 <td>{{ diaryEntry.datetime | date("Y-m-d h:i") }}</td>
                 <td>{{ diaryEntry.note }}</td>
                 <td>{{ diaryEntry.category }}</td>

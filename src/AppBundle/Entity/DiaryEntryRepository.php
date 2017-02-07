@@ -12,4 +12,8 @@ use Doctrine\ORM\EntityRepository;
  */
 class DiaryEntryRepository extends EntityRepository
 {
+    public function findAllDesc()
+    {
+        return $this->findBy(array(), array('id' => 'DESC'));
+    }
 }

@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block header %}
-    Edit diary entry
+Edit diary entry
 {% endblock %}
 
 {% block body %}
-    {{ include("diary/form.html.twig") }}
+    {{ include("diary/entry.html.twig") }}
+    {{ form_end(form) }}
 {% endblock %}
