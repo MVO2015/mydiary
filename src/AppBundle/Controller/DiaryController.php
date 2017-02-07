@@ -48,14 +48,13 @@ class DiaryController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('save')->isClicked()) {
                 $diaryEntry = $form->getData();
-                $this->addFlash(
-                    'success',
-                    'Your entry "' . $diaryEntry->getNote() . '" was saved!'
-                );
-
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($entry);
                 $em->flush();
+                $this->addFlash(
+                    'success',
+                    'Your entry "' . $diaryEntry->getNote() . '" has been saved!'
+                );
             }
             return $this->redirectToRoute("index");
         }
@@ -81,25 +80,60 @@ class DiaryController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('update')->isClicked()) {
                 $diaryEntry = $form->getData();
+                $em->flush();
                 $this->addFlash(
                     'success',
-                    'Your entry "' . $diaryEntry->getNote() . '" was updated!'
+                    'Your entry "' . $diaryEntry->getNote() . '" has been updated!'
                 );
+            }
+            if ($form->get('delete')->isClicked()) {
+                $diaryEntry = $form->getData();
+                $em->remove($diaryEntry);
                 $em->flush();
+                $this->addFlash(
+                    'success',
+                    'Your entry "' . $diaryEntry->getNote() . '" has been deleted!'
+                );
             }
             return $this->redirectToRoute("index");
         }
         return $this->render('diary/edit.html.twig', array(
             'form' => $form->createView(),
         ));
-
     }
 
+    /**
+     * @Route("/delete/{id}", name="delete")
+     * @param Request $request
+     * @param int $id Diary entry id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
     public function deleteAction(Request $request, $id)
     {
+        $em = $this->getDoctrine()->getManager();
+        $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
+        $form = $this->createForm(EditDiaryEntryType::class, $diaryEntry);
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $diaryEntry = $form->getData();
+            $em->remove($diaryEntry);
+            $em->flush();
+            $this->addFlash(
+                'success',
+                'Your entry "' . $diaryEntry->getNote() . '" has been deleted!'
+            );
+            return $this->redirectToRoute("index");
+        }
+        return $this->render('diary/edit.html.twig', array(
+            'form' => $form->createView(),
+        ));
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     */
     public function showAction(Request $request, $id)
     {
 

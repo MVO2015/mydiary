@@ -15,6 +15,10 @@ class EditDiaryEntryType extends BaseDiaryEntryType
                     'attr' => ['class' => "btn btn-lg btn-success"]
                 ]
             )
+            ->add('delete', SubmitType::class, [
+            'attr' => ['class' => "btn btn-lg btn-danger"],
+                ]
+            )
         ;
     }
 }
