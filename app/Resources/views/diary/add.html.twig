@@ -6,5 +6,9 @@ New diary entry
 
 {% block body %}
     {{ include("diary/entry.html.twig") }}
+    <div class="clearfix">
+        <button type="submit" class="btn btn-lg btn-success">Save</button>
+        {{ include("diary/cancel.html.twig") }}
+    </div>
     {{ form_end(form) }}
 {% endblock %}

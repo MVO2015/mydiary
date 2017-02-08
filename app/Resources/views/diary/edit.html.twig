@@ -8,7 +8,11 @@ Edit diary entry
     {{ include("diary/entry.html.twig") }}
 
     <!-- Trigger the modal with a button -->
-    <button type="button" class="btn btn-danger btn-lg" data-href="{{ path('delete', {'id': id }) }}" data-toggle="modal" data-target="#confirm-delete">Delete</button>
+    <div class="clearfix">
+        <button id="base_diary_entry_update" type="submit" class="btn btn-lg btn-success" name="base_diary_entry[update]">Update</button>
+        <button type="button" class="btn btn-danger btn-lg" data-href="{{ path('delete', {'id': id }) }}" data-toggle="modal" data-target="#confirm-delete">Delete</button>
+        {{ include("diary/cancel.html.twig") }}
+    </div>
 
     <!-- Modal -->
     <div id="confirm-delete" class="modal fade" role="dialog">

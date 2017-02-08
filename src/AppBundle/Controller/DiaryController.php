@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\DiaryEntry;
 use AppBundle\Form\AddDiaryEntryType;
-use AppBundle\Form\EditDiaryEntryType;
+use AppBundle\Form\BaseDiaryEntryType;
 use DateTime;
 use DateTimeZone;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -41,7 +41,7 @@ class DiaryController extends Controller
     public function addAction(Request $request)
     {
         $entry = new DiaryEntry(new DateTime("now", new DateTimeZone("Europe/Prague")), "my diary entry", "diary");
-        $form = $this->createForm(AddDiaryEntryType::class, $entry);
+        $form = $this->createForm(BaseDiaryEntryType::class, $entry);
 
         $form->handleRequest($request);
 
@@ -74,7 +74,7 @@ class DiaryController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-        $form = $this->createForm(EditDiaryEntryType::class, $diaryEntry);
+        $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

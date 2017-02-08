@@ -27,11 +27,6 @@ class BaseDiaryEntryType extends AbstractType
 //                'input' => 'datetime'])
             ->add('note', TextareaType::class, ['label' => "Note: "])
             ->add('category', TextType::class, ['label' => 'Category: '] )
-            ->add('cancel', SubmitType::class, [
-                    'validation_groups' => false,
-                    'attr' => ['class' => "btn btn-lg btn-default"],
-                ]
-            )
         ;
     }
 
