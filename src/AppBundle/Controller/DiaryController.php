@@ -99,6 +99,7 @@ class DiaryController extends Controller
         }
         return $this->render('diary/edit.html.twig', array(
             'form' => $form->createView(),
+            'id' => $diaryEntry->getId(),
         ));
     }
 
