@@ -86,20 +86,12 @@ class DiaryController extends Controller
                     'Your entry "' . $diaryEntry->getNote() . '" has been updated!'
                 );
             }
-            if ($form->get('delete')->isClicked()) {
-                $diaryEntry = $form->getData();
-                $em->remove($diaryEntry);
-                $em->flush();
-                $this->addFlash(
-                    'success',
-                    'Your entry "' . $diaryEntry->getNote() . '" has been deleted!'
-                );
-            }
             return $this->redirectToRoute("index");
         }
         return $this->render('diary/edit.html.twig', array(
             'form' => $form->createView(),
             'id' => $diaryEntry->getId(),
+            'shortNote' => $this->get('app.utils.text')->shorten($diaryEntry->getNote()),
         ));
     }
 
@@ -107,28 +99,19 @@ class DiaryController extends Controller
      * @Route("/delete/{id}", name="delete")
      * @param Request $request
      * @param int $id Diary entry id
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deleteAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-        $form = $this->createForm(EditDiaryEntryType::class, $diaryEntry);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $diaryEntry = $form->getData();
-            $em->remove($diaryEntry);
-            $em->flush();
-            $this->addFlash(
-                'success',
-                'Your entry "' . $diaryEntry->getNote() . '" has been deleted!'
-            );
-            return $this->redirectToRoute("index");
-        }
-        return $this->render('diary/edit.html.twig', array(
-            'form' => $form->createView(),
-        ));
+        $em->remove($diaryEntry);
+        $em->flush();
+        $this->addFlash(
+            'success',
+            'Your entry "' . $diaryEntry->getNote() . '" has been deleted!'
+        );
+        return $this->redirectToRoute("index");
     }
 
     /**

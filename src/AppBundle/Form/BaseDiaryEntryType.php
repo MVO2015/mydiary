@@ -20,8 +20,11 @@ class BaseDiaryEntryType extends AbstractType
         $builder
             ->add('dateTime', DateTimeType::class, [
                 'label' => "Date and time: ",
-                'widget' => 'choice',
-                'input' => 'datetime'])
+                'widget' => 'single_text',
+                'html5' => false,
+            ])
+//                'widget' => 'choice',
+//                'input' => 'datetime'])
             ->add('note', TextareaType::class, ['label' => "Note: "])
             ->add('category', TextType::class, ['label' => 'Category: '] )
             ->add('cancel', SubmitType::class, [

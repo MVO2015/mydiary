@@ -1,3 +1,40 @@
 {{ form_start(form) }}
-{{ form_widget(form) }}
+
+<div class="container">
+    <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+                <div class='input-group date' id='datetimepicker1'>
+                    {#<input type='text' class="form-control" value="2017-01-01 12:00"/>#}
+                    {{ form_widget(form.dateTime, {attr: {
+                            'data-format': "dd/MM/yyyy hh:mm:ss",
+                            'class': 'form-control',
+                            'value': '2017-01-01 12:00'} }) }}
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                        $('#datetimepicker1').datetimepicker();
+//                    $("#datetimepicker1").data('DateTimePicker').setLocalDate(new Date(year, month, day, 00, 01));
+                });
+        </script>
+    </div>
+    <div class="row">
+    {{ form_widget(form.note, {attr: {
+        'class': 'form-control',
+        'rows': '5'} })
+    }}
+    </div>
+
+    <div class="row">
+        {{ form_row(form.category, {attr: {
+                'class': 'form-control',} })
+        }}
+    </div>
+
+</div>
 

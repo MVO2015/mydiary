@@ -6,9 +6,9 @@ Edit diary entry
 
 {% block body %}
     {{ include("diary/entry.html.twig") }}
-    {{ form_end(form) }}
+
     <!-- Trigger the modal with a button -->
-    <button type="button" class="btn btn-info btn-lg" data-href="{{ path('delete', {'id': id }) }}" data-toggle="modal" data-target="#confirm-delete">Delete</button>
+    <button type="button" class="btn btn-danger btn-lg" data-href="{{ path('delete', {'id': id }) }}" data-toggle="modal" data-target="#confirm-delete">Delete</button>
 
     <!-- Modal -->
     <div id="confirm-delete" class="modal fade" role="dialog">
@@ -21,15 +21,17 @@ Edit diary entry
             <h4 class="modal-title">Do you really want to delete this note?</h4>
           </div>
           <div class="modal-body">
-            <p>Tady něco je</p>
+            <p>{{ shortNote }}</p>
           </div>
           <div class="modal-footer">
-            <button type="submit" class="btn btn-danger" data-dismiss="modal">Delete</button>
+            <a type="button" class="btn btn-danger btn-ok">Delete</a>
             <button type="button" class="btn btn-default" data-dismiss="modal">Oh, no!</button>
           </div>
         </div>
 
       </div>
     </div>
+
+    {{ form_end(form) }}
 
 {% endblock %}
