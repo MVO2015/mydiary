@@ -1,41 +1,37 @@
-{% extends 'base.html.twig' %}
+{% extends 'diary/entry.html.twig' %}
 
 {% block header %}
-Edit diary entry
+    Edit diary entry
 {% endblock %}
 
-{% block body %}
-    {{ include("diary/entry.html.twig") }}
+{% block form_buttons %}
+
+    {{ form_widget(form.update) }}
 
     <!-- Trigger the modal with a button -->
-    <div class="clearfix">
-        <button id="base_diary_entry_update" type="submit" class="btn btn-lg btn-success" name="base_diary_entry[update]">Update</button>
-        <button type="button" class="btn btn-danger btn-lg" data-href="{{ path('delete', {'id': id }) }}" data-toggle="modal" data-target="#confirm-delete">Delete</button>
-        {{ include("diary/cancel.html.twig") }}
-    </div>
+    <button type="button" class="btn btn-danger btn-lg" data-href="{{ path('delete', {'id': id }) }}"
+            data-toggle="modal" data-target="#confirm-delete">Delete
+    </button>
+    {{ include("diary/cancel.html.twig") }}
 
     <!-- Modal -->
     <div id="confirm-delete" class="modal fade" role="dialog">
-      <div class="modal-dialog">
+        <div class="modal-dialog">
 
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Do you really want to delete this note?</h4>
-          </div>
-          <div class="modal-body">
-            <p>{{ shortNote }}</p>
-          </div>
-          <div class="modal-footer">
-            <a type="button" class="btn btn-danger btn-ok">Delete</a>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Oh, no!</button>
-          </div>
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Do you really want to delete this note?</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{{ shortNote }}</p>
+                </div>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-danger btn-ok">Delete</a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Oh, no!</button>
+                </div>
+            </div>
         </div>
-
-      </div>
     </div>
-
-    {{ form_end(form) }}
-
 {% endblock %}

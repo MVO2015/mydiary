@@ -1,14 +1,10 @@
-{% extends 'base.html.twig' %}
+{% extends 'diary/entry.html.twig' %}
 
 {% block header %}
-New diary entry
+    Add diary entry
 {% endblock %}
 
-{% block body %}
-    {{ include("diary/entry.html.twig") }}
-    <div class="clearfix">
-        <button type="submit" class="btn btn-lg btn-success">Save</button>
-        {{ include("diary/cancel.html.twig") }}
-    </div>
-    {{ form_end(form) }}
+{% block form_buttons %}
+    {{ form_widget(form.save) }}
+    {{ include("diary/cancel.html.twig") }}
 {% endblock %}

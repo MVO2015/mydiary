@@ -1,0 +1,4 @@
+/*bootstrap table corrections, esp. for Chrome*/
+.table td:nth-child(1){
+    width:20%;
+}

@@ -8,6 +8,7 @@ use AppBundle\Form\BaseDiaryEntryType;
 use DateTime;
 use DateTimeZone;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,6 +43,15 @@ class DiaryController extends Controller
     {
         $entry = new DiaryEntry(new DateTime("now", new DateTimeZone("Europe/Prague")), "my diary entry", "diary");
         $form = $this->createForm(BaseDiaryEntryType::class, $entry);
+        // buttons
+        $form->add(
+            'save',
+            SubmitType::class,
+            [
+                'attr' => [
+                    'class' => "btn btn-lg btn-success"
+                ]
+            ]);
 
         $form->handleRequest($request);
 
@@ -75,6 +85,15 @@ class DiaryController extends Controller
         $em = $this->getDoctrine()->getManager();
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
         $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry);
+        // buttons
+        $form->add(
+            'update',
+            SubmitType::class,
+            [
+                'attr' => [
+                    'class' => "btn btn-lg btn-success"
+                ]
+            ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -88,11 +107,14 @@ class DiaryController extends Controller
             }
             return $this->redirectToRoute("index");
         }
-        return $this->render('diary/edit.html.twig', array(
-            'form' => $form->createView(),
-            'id' => $diaryEntry->getId(),
-            'shortNote' => $this->get('app.utils.text')->shorten($diaryEntry->getNote()),
-        ));
+        if ($diaryEntry) {
+            return $this->render('diary/edit.html.twig', array(
+                'form' => $form->createView(),
+                'id' => $diaryEntry->getId(),
+                'shortNote' => $this->get('app.utils.text')->shorten($diaryEntry->getNote()),
+            ));
+        }
+        return $this->redirectToRoute("index");
     }
 
     /**
@@ -105,12 +127,14 @@ class DiaryController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-        $em->remove($diaryEntry);
-        $em->flush();
-        $this->addFlash(
-            'success',
-            'Your entry "' . $diaryEntry->getNote() . '" has been deleted!'
-        );
+        if ($diaryEntry) {
+            $em->remove($diaryEntry);
+            $em->flush();
+            $this->addFlash(
+                'success',
+                'Your entry "' . $diaryEntry->getNote() . '" has been deleted!'
+            );
+        }
         return $this->redirectToRoute("index");
     }
 
