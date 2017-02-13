@@ -35,14 +35,14 @@ class TagController extends FOSRestController
         $search = $request->query->get('search');
         $repo = $this->getDoctrine()->getRepository('AppBundle:Tag');
         $query = $repo->createQueryBuilder('tag')
-            ->where('tag.tag LIKE :text')
-            ->setParameter('text', $search.'%')
+            ->where('tag.text LIKE :param')
+            ->setParameter('param', $search.'%')
             ->getQuery();
-        $singleResult = $query->getResult();
-
-        if ($singleResult === null) {
+        $dataItems = $query->getResult();
+        $result = ['total_count' => count($dataItems), 'items' => $dataItems];
+        if ($dataItems === null) {
             return new View("tag not found", Response::HTTP_NOT_FOUND);
         }
-        return $singleResult;
+        return $result;
     }
 }

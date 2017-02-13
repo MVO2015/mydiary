@@ -24,9 +24,9 @@ class Tag
     /**
      * @var string
      *
-     * @ORM\Column(name="tag", type="string", length=100)
+     * @ORM\Column(name="text", type="string", length=100)
      */
-    private $tag;
+    private $text;
 
 
     /**
@@ -40,27 +40,27 @@ class Tag
     }
 
     /**
-     * Set tag
+     * Set text
      *
-     * @param string $tag
+     * @param string $text
      *
      * @return Tag
      */
-    public function setTag($tag)
+    public function setText($text)
     {
-        $this->tag = $tag;
+        $this->text = $text;
 
         return $this;
     }
 
     /**
-     * Get tag
+     * Get text
      *
      * @return string
      */
-    public function getTag()
+    public function getText()
     {
-        return $this->tag;
+        return $this->text;
     }
 }
 

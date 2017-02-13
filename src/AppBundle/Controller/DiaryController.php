@@ -24,13 +24,10 @@ class DiaryController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function diaryAction(Request $request)
+    public function homeAction(Request $request)
     {
-        $session = $request->getSession();
-        $diaryEntry = new DiaryEntry(time(), "testovací text", "testovací_kategorie");
         return $this->render(
-            'diary/diary.html.twig',
-            ['note' => $diaryEntry->getNote(), 'dateTime' => $diaryEntry->getDateTime()]
+            'diary/home.html.twig'
         );
     }
 

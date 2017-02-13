@@ -29,7 +29,6 @@ class BaseDiaryEntryType extends AbstractType
         ->add('category', TextType::class, ['label' => 'Category: '])
         ->add('category', ChoiceType::class, [
                 'label' => 'Category: ',
-                'choices' => array('diary' => 1, 'Symfony' => 2),
             ]
         );
     }
