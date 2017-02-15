@@ -9,7 +9,7 @@ $(document).ready(function () {
         ajax: {
             url: "/tag/?",
             dataType: 'json',
-            delay: 250,
+            delay: 100,
             data: function (params) {
                 return {
                     search: params.term, // search term

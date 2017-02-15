@@ -4,13 +4,10 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\DiaryEntry;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -26,11 +23,26 @@ class BaseDiaryEntryType extends AbstractType
             ]
         )
         ->add('note', TextareaType::class, ['label' => "Note: "])
-        ->add('category', TextType::class, ['label' => 'Category: '])
         ->add('category', ChoiceType::class, [
                 'label' => 'Category: ',
+                'multiple'  => true,
+                'required' => false,
+                'choices' => ['a' => '1', 'b' => '2', 'c' => '3'],
             ]
         );
+        $transformer = new CallbackTransformer(
+            function ($tagsAsString) {
+                // transform the string back to an array
+                return explode(', ', $tagsAsString);
+            },
+            function ($tagsAsArray) {
+                // transform the array to a string
+                return implode(', ', $tagsAsArray);
+            }
+        );
+        $builder
+        ->get('category')->addModelTransformer($transformer)
+        ->resetViewTransformers();
     }
 
     public function configureOptions(OptionsResolver $resolver)

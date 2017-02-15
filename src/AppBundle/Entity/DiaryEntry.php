@@ -28,15 +28,16 @@ class DiaryEntry
      */
     private $note;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
      */
     private $category;
 
     /**
      * DiaryEntry constructor.
-     * @param string $dateTime
-     * @param string $note
-     * @param string $category
+     * @param $dateTime
+     * @param $note
+     * @param $category
      */
     public function __construct($dateTime, $note, $category)
     {
