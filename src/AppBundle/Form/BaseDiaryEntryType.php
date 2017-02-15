@@ -5,10 +5,8 @@ namespace AppBundle\Form;
 use AppBundle\Entity\DiaryEntry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,11 +24,12 @@ class BaseDiaryEntryType extends AbstractType
             ]
         )
         ->add('note', TextareaType::class, ['label' => "Note: "])
-        ->add('category', TextType::class, ['label' => 'Category: '])
         ->add('category', ChoiceType::class, [
                 'label' => 'Category: ',
             ]
         );
+        $builder->get('category')
+        ->resetViewTransformers();
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -39,10 +39,18 @@
         </div>
 
         <div class="row col-sm-6 form-group">
-            {{ form_label(form.note, 'Category:') }}
+            {{ form_label(form.category, 'Category:') }}
             {{ form_widget(form.category, {attr: {
                 'class': 'form-control',
-                'multiple': ''} }) }}
+                'multiple': 'multiple'} }) }}
+        </div>
+
+        <div class="row col-sm-6 form-group">
+            {{ form_label(form.tags, 'Tags:') }}
+            {{ form_widget(form.tags, {
+                attr: {
+                    'class': 'form-control',
+                    'multiple': 'multiple'} }) }}
         </div>
 
     </div>

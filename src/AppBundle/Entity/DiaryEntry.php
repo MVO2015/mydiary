@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -33,6 +34,12 @@ class DiaryEntry
     private $category;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="diaryEntries")
+     * @ORM\JoinTable(name="diaryEntries_tags")
+     */
+    private $tags;
+
+    /**
      * DiaryEntry constructor.
      * @param string $dateTime
      * @param string $note
@@ -43,6 +50,7 @@ class DiaryEntry
         $this->dateTime = $dateTime;
         $this->note = $note;
         $this->category = $category;
+        $this->tags = new ArrayCollection();
     }
 
     /**
@@ -107,5 +115,13 @@ class DiaryEntry
     public function setDateTime($dateTime)
     {
         $this->dateTime = $dateTime;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTags()
+    {
+        return $this->tags;
     }
 }

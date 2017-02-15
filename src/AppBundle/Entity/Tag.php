@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,6 +28,16 @@ class Tag
      * @ORM\Column(name="text", type="string", length=100)
      */
     private $text;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="DiaryEntry", mappedBy="tags")
+     */
+    private $diaryEntries;
+
+    public function __construct()
+    {
+        $this->diaryEntries = new ArrayCollection();
+    }
 
 
     /**
@@ -61,6 +72,19 @@ class Tag
     public function getText()
     {
         return $this->text;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDiaryEntries()
+    {
+        return $this->diaryEntries;
+    }
+
+    public function __toString()
+    {
+        return $this->getText();
     }
 }
 

@@ -3,11 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\DiaryEntry;
-use AppBundle\Form\AddDiaryEntryType;
+use AppBundle\Entity\Tag;
 use AppBundle\Form\BaseDiaryEntryType;
 use DateTime;
 use DateTimeZone;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\PersistentCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -80,8 +83,22 @@ class DiaryController extends Controller
     public function editAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
+        /** @var DiaryEntry $diaryEntry */
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
         $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry);
+        /** @var PersistentCollection $tags */
+        $tags = $diaryEntry->getTags();
+        $tags = $tags->toArray();
+        $choices = [];
+        /** @var Tag $oneTag */
+        foreach ($tags as $oneTag) {
+            $choices[] = $oneTag->getText();
+        }
+
+        $form->add('tags', ChoiceType::class, [
+            'choices' => $choices
+        ]);
+
         // buttons
         $form->add(
             'update',
