@@ -85,19 +85,9 @@ class DiaryController extends Controller
         $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntry $diaryEntry */
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-        $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry);
-        /** @var PersistentCollection $tags */
-        $tags = $diaryEntry->getTags();
-        $tags = $tags->toArray();
-        $choices = [];
-        /** @var Tag $oneTag */
-        foreach ($tags as $oneTag) {
-            $choices[] = $oneTag->getText();
-        }
-
-        $form->add('tags', ChoiceType::class, [
-            'choices' => $choices
-        ]);
+        $tagChoices = $diaryEntry->getTempTags();
+        $debug = print_r($tagChoices, true);
+        $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry, ['tag_choices' => $tagChoices]);
 
         // buttons
         $form->add(
@@ -108,6 +98,7 @@ class DiaryController extends Controller
                     'class' => "btn btn-lg btn-success"
                 ]
             ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -124,8 +115,10 @@ class DiaryController extends Controller
         if ($diaryEntry) {
             return $this->render('diary/edit.html.twig', array(
                 'form' => $form->createView(),
-                'id' => $diaryEntry->getId(),
+                'id' => $diaryEntry->getId(), // for Delete button
+                // for Modal - delete confirmation
                 'shortNote' => $this->get('app.utils.text')->shorten($diaryEntry->getNote()),
+                'debug' => $debug
             ));
         }
         return $this->redirectToRoute("index");

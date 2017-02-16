@@ -4,7 +4,11 @@ $(document).ready(function () {
         $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
     });
 
-    $("#base_diary_entry_category").select2({
+    $("#base_diary_entry_tempTags").select2({
+        tags:true
+    });
+    /*
+    $("#???base_diary_entry_category").select2({
         tags: true,
         ajax: {
             url: "/tag/?",
@@ -30,10 +34,14 @@ $(document).ready(function () {
             cache: true
         },
         escapeMarkup: function (markup) {
-            return  markup;
+            return markup;
         },
         minimumInputLength: 1,
         //templateResult: formatData,
         //templateSelection: formatDataSelection
+        initSelection: function (element, callback) {
+            callback({id: 1, text: 'php'});
+        }
     })
+    */
 })

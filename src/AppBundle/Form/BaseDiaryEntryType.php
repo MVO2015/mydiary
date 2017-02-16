@@ -2,7 +2,9 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\ChoiceLoader;
 use AppBundle\Entity\DiaryEntry;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -27,15 +29,26 @@ class BaseDiaryEntryType extends AbstractType
         ->add('category', ChoiceType::class, [
                 'label' => 'Category: ',
             ]
-        );
-        $builder->get('category')
-        ->resetViewTransformers();
+        )
+        ->add('tempTags', ChoiceType::class,  [
+            'multiple' => true,
+            'required' => false,
+            'label' => "Tags: ",
+            'attr' => ['class' => "form-control"],
+            'choice_loader' => new ChoiceLoader($options['tag_choices']),
+            'choice_attr' => function($val, $key, $index) {
+                    return ['selected' => 'selected'];
+            },
+        ])
+        ->get('category')->resetViewTransformers();
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => DiaryEntry::class,
+            'tag_choices' => []
         ]);
     }
 }

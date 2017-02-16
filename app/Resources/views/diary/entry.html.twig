@@ -46,11 +46,12 @@
         </div>
 
         <div class="row col-sm-6 form-group">
-            {{ form_label(form.tags, 'Tags:') }}
-            {{ form_widget(form.tags, {
-                attr: {
-                    'class': 'form-control',
-                    'multiple': 'multiple'} }) }}
+            {{ form_widget(form.tempTags) }}
+            {#{{ form_label(form.tempTags, 'Tags:') }}#}
+            {#{{ form_widget(form.tempTags, {#}
+                {#attr: {#}
+                    {#'class': 'form-control',#}
+                    {#'multiple': 'multiple'} }) }}#}
         </div>
 
     </div>
