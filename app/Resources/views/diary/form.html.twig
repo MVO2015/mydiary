@@ -1,3 +1,53 @@
 FORM.HTML.TWIG
-{{ form(form) }}
+{{ form_start(form) }}
 {{ debug }}
+<h3>Tags</h3>
+<ul class="tags" data-prototype="{{ form_widget(form.tags.vars.prototype)|e('html_attr') }}">
+    {# iterate over each existing tag and render its only field: name #}
+    {% for tag in form.tags %}
+        <li>{{ form_widget(tag.text) }}</li>
+    {% endfor %}
+</ul>
+
+{{ form_end(form) }}
+<script>
+    function addTagFormDeleteLink($tagFormLi) {
+        var $removeFormA = $('<a href="#">delete this tag</a>');
+        $tagFormLi.append($removeFormA);
+
+        $removeFormA.on('click', function(e) {
+            // prevent the link from creating a "#" on the URL
+            e.preventDefault();
+
+            // remove the li for the tag form
+            $tagFormLi.remove();
+        });
+    }
+
+    var $collectionHolder;
+
+    // setup an "add a tag" link
+    var $addTagLink = $('<a href="#" class="add_tag_link">Add a tag</a>');
+    var $newLinkLi = $('<li></li>').append($addTagLink);
+
+    jQuery(document).ready(function() {
+        // Get the ul that holds the collection of tags
+        $collectionHolder = $('ul.tags');
+
+        // add the "add a tag" anchor and li to the tags ul
+        $collectionHolder.append($newLinkLi);
+
+        // count the current form inputs we have (e.g. 2), use that as the new
+        // index when inserting a new item (e.g. 2)
+        $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+        $addTagLink.on('click', function(e) {
+            // prevent the link from creating a "#" on the URL
+            e.preventDefault();
+
+            // add a new tag form (see next code block)
+            addTagForm($collectionHolder, $newLinkLi);
+        });
+    });
+
+</script>

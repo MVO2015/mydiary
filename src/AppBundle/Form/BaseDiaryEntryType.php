@@ -36,12 +36,15 @@ class BaseDiaryEntryType extends AbstractType
             'label' => "Tags: ",
             'attr' => ['class' => "form-control"],
             'choice_loader' => new ChoiceLoader($options['tag_choices']),
-            'choice_attr' => function($val, $key, $index) {
-                    return ['selected' => 'selected'];
+            'choice_attr' => function ($val, $key, $index) {
+                return ['selected' => 'selected'];
             },
         ])
-        ->get('category')->resetViewTransformers();
-        ;
+            ->add('tags', CollectionType::class, array(
+                'entry_type' => TagType::class,
+                'allow_add' => true,
+            ))
+            ->get('category')->resetViewTransformers();;
     }
 
     public function configureOptions(OptionsResolver $resolver)

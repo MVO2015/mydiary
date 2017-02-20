@@ -34,9 +34,9 @@ class Builder implements ContainerAwareInterface
 //           ));
 
            // create another menu item
-           $menu->addChild('About Me', array('route' => 'index'));
+           $menu->addChild('Diary', array('route' => 'index'));
            // you can also add sub level's to your menu's as follows
-           $menu->addChild('Profile', array('route' => 'index'));
+           $menu->addChild('Tags', array('route' => 'tag_index'));
 
            // ... add more children
 

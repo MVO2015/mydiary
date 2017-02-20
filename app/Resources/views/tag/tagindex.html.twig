@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    Tag index
+{% endblock %}
+
+{% block body %}
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Text</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for tag in tags %}
+            <tr>
+                <td>{{ tag.id }}</td>
+                <td>{{ tag.text }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -2,47 +2,33 @@
 
 namespace AppBundle\Controller;
 
-use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\View\View;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-class TagController extends FOSRestController
+/**
+ * Class TagController
+ * @package AppBundle\Controller
+ */
+class TagController extends Controller
 {
     /**
-     * @Rest\Get("/tag/{id}")
-     * @param $id
-     * @return View|null|object
-     */
-    public function idAction($id)
-    {
-        $singleResult = $this->getDoctrine()->getRepository('AppBundle:Tag')->find($id);
-        if ($singleResult === null) {
-            return new View("tag not found", Response::HTTP_NOT_FOUND);
-        }
-        return $singleResult;
-    }
-
-    /**
-     * @Rest\Get("/tag/")
+     * @Route(
+     *     "/tag/index/{orderBy}/{sort}",
+     *     name="tag_index",
+     *     defaults={"orderBy": "id", "sort": "asc"},
+     *     requirements={"orderBy": "id|text", "sort": "asc|desc"},
+     *     )
      * @param Request $request
-     * @return array|View
-     * @internal param $data
+     * @param string $orderBy Database column for order by clause
+     * @param string $sort sorting parameter of database order by clause
+     * @return Response
      */
-    public function searchAction(Request $request)
+    public function indexAction(Request $request, $orderBy="id", $sort="asc")
     {
-        $search = $request->query->get('search');
-        $repo = $this->getDoctrine()->getRepository('AppBundle:Tag');
-        $query = $repo->createQueryBuilder('tag')
-            ->where('tag.text LIKE :param')
-            ->setParameter('param', $search.'%')
-            ->getQuery();
-        $dataItems = $query->getResult();
-        $result = ['total_count' => count($dataItems), 'items' => $dataItems];
-        if ($dataItems === null) {
-            return new View("tag not found", Response::HTTP_NOT_FOUND);
-        }
-        return $result;
+        $em = $this->getDoctrine()->getManager();
+        $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy, $sort);
+        return $this->render("tag/tagindex.html.twig", ['tags' => $tags]);
     }
 }

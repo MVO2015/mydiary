@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\PersistentCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -129,7 +128,6 @@ class DiaryEntry
 
     public function getTempTags()
     {
-        /** @var PersistentCollection $tagsArray */
         $tagsArray = $this->getTags();
         $tempTags = [];
         /** @var Tag $oneTag */

@@ -14,7 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 /**
  * Class DiaryController
@@ -113,7 +113,7 @@ class DiaryController extends Controller
             return $this->redirectToRoute("index");
         }
         if ($diaryEntry) {
-            return $this->render('diary/edit.html.twig', array(
+            return $this->render('diary/form.html.twig', array(
                 'form' => $form->createView(),
                 'id' => $diaryEntry->getId(), // for Delete button
                 // for Modal - delete confirmation

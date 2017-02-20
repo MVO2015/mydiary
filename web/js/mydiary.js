@@ -11,7 +11,7 @@ $(document).ready(function () {
     $("#???base_diary_entry_category").select2({
         tags: true,
         ajax: {
-            url: "/tag/?",
+            url: "api/tag/?",
             dataType: 'json',
             delay: 250,
             data: function (params) {
