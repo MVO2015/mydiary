@@ -13,7 +13,7 @@
         </thead>
         <tbody>
         {% for tag in tags %}
-            <tr>
+            <tr onclick="window.location.href='{{ path('tag_edit', {'id': tag.id}) }}';">
                 <td>{{ tag.id }}</td>
                 <td>{{ tag.text }}</td>
             </tr>

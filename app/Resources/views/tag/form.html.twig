@@ -1,0 +1,9 @@
+{{ form_start(form) }}
+<div>
+    {{ form_widget(form.text) }}
+</div>
+{% block buttons %}
+    <hr>
+    {{ form_widget(form.update) }}
+{% endblock %}
+{{ form_end(form) }}
