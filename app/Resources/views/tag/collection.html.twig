@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    Tag collection
+{% endblock %}
+
+{% block body %}
+        {% for tag in tags %}
+            <span class="tag_element">
+                <span>{{ tag.text }} <a href={{ path('tag_delete_element', {'id': tag.id}) }}>×</a></span>
+            </span>
+        {% endfor %}
+{% endblock %}

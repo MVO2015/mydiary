@@ -23,9 +23,9 @@ class Builder implements ContainerAwareInterface
         $menu->addChild('Add', array('route' => 'add'));
         $menu->addChild('Home', array('route' => 'homepage'));
 
-           // access services from the container!
+        // access services from the container!
 //           $em = $this->container->get('doctrine')->getManager();
-           // findMostRecent and Blog are just imaginary examples
+        // findMostRecent and Blog are just imaginary examples
 //           $blog = $em->getRepository('AppBundle:Blog')->findMostRecent();
 //
 //           $menu->addChild('Latest Blog Post', array(
@@ -33,13 +33,12 @@ class Builder implements ContainerAwareInterface
 //               'routeParameters' => array('id' => $blog->getId())
 //           ));
 
-           // create another menu item
-           $menu->addChild('Diary', array('route' => 'index'));
-           // you can also add sub level's to your menu's as follows
-           $menu->addChild('Tags', array('route' => 'tag_index'));
+        $menu->addChild('Diary', array('route' => 'index'));
+        $menu->addChild('Tag Index', ['route' => 'tag_index']);
+        $menu->addChild('Tag Collection', ['route' => 'tag_collection']);
 
-           // ... add more children
+        // ... add more children
 
-           return $menu;
-       }
+        return $menu;
+    }
 }
