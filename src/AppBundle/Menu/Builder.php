@@ -30,12 +30,16 @@ class Builder implements ContainerAwareInterface
 //
 //           $menu->addChild('Latest Blog Post', array(
 //               'route' => 'blog_show',
-//               'routeParameters' => array('id' => $blog->getId())
+//               'routeParameters'))) => array('id' => $blog->getId())
 //           ));
 
         $menu->addChild('Diary', array('route' => 'index'));
-        $menu->addChild('Tag Index', ['route' => 'tag_index']);
-        $menu->addChild('Tag Collection', ['route' => 'tag_collection']);
+        $menu->addChild('Tags')->setAttribute('dropdown',true)
+            ->setUri('#')
+            ->setLinkAttributes(['data-toggle' => 'dropdown', 'class' => 'dropdown-toggle'])
+            ->setChildrenAttribute('class', 'dropdown-menu')
+            ->addChild('Tag Index', ['route' => 'tag_index'])->getParent()
+            ->addChild('Tag Collection', ['route' => 'tag_collection']);
 
         // ... add more children
 
