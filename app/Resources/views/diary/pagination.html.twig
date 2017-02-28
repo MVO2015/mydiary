@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    Pagination
+{% endblock %}
+
+{% block body %}
+
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Date and time</th>
+            <th>Note</th>
+            <th>Category</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for diaryEntry in diaryEntries %}
+            <tr onclick="window.location.href='{{ path('edit', {'id': diaryEntry.id}) }}';">
+                <td>{{ diaryEntry.datetime | date("Y-m-d h:i") }}</td>
+                <td>{{ diaryEntry.note }}</td>
+                <td>{{ diaryEntry.category }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+    {% if maxPages > 1 %}
+        <ul class="pagination pagination-sm">
+            {# `«` arrow  #}
+            <li {{ thisPage == 1 ? 'class="disabled"' }}>
+                <a href="{{ path('paginate', {page: thisPage-1 < 1 ? 1 : thisPage-1}) }}">prev</a>
+            </li>
+
+            {# Render each page number #}
+            {% for i in 1..maxPages %}
+                <li {{ thisPage == i ? 'class="active"' }}>
+                    <a href="{{ path('paginate', {page: i}) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            {# `»` arrow #}
+            <li {{ thisPage == maxPages ? 'class="disabled"' }}>
+                <a href="{{ path('paginate', {page: thisPage+1 <= maxPages ? thisPage+1 : thisPage}) }}">next</a>
+            </li>
+        </ul>
+    {% endif %}
+{% endblock %}

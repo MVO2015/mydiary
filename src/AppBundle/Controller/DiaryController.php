@@ -173,4 +173,31 @@ class DiaryController extends Controller
             ]
         );
     }
+
+    /**
+     * Controller Index action with paginator
+     * @Route("/paginate/{page}", name="paginate")
+     * @param integer $page The current page passed via URL
+     */
+    public function paginateAction($page = 1)
+    {
+        $em = $this->getDoctrine()->getManager();
+        /** @var DiaryEntry $diaryEntry */
+        $diaryEntries = $em->getRepository("AppBundle:DiaryEntry")->getAllEntries();
+
+        // You can also call the count methods (check PHPDoc for `paginate()`)
+        $totalEntriesReturned = $diaryEntries->getIterator()->count();
+
+        # Count of ALL posts (ie: `20` posts)
+        $totalEntries = $diaryEntries->count();
+
+        # ArrayIterator
+        $iterator = $diaryEntries->getIterator();
+
+        $limit = 5;
+        $maxPages = ceil($totalEntries / $limit);
+        $thisPage = $page;
+        // Pass through the 3 above variables to calculate pages in twig
+        return $this->render('diary/pagination.html.twig', ['diaryEntries' => $iterator, 'maxPages' => $maxPages, 'thisPage' => $thisPage]);
+    }
 }
