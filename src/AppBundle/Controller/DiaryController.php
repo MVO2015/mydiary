@@ -3,14 +3,10 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\DiaryEntry;
-use AppBundle\Entity\Tag;
 use AppBundle\Form\BaseDiaryEntryType;
 use DateTime;
 use DateTimeZone;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\PersistentCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +23,7 @@ class DiaryController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function homeAction(Request $request)
+    public function homeAction()
     {
         return $this->render(
             'diary/home.html.twig'
@@ -126,11 +122,10 @@ class DiaryController extends Controller
 
     /**
      * @Route("/delete/{id}", name="delete")
-     * @param Request $request
      * @param int $id Diary entry id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction($id)
     {
         $em = $this->getDoctrine()->getManager();
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
@@ -146,26 +141,36 @@ class DiaryController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param $id
-     */
-    public function showAction(Request $request, $id)
-    {
-
-    }
-
-    /**
      * @Route("/index", name="index")
-     * @param Request $request
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
         $diaryEntries = $em->getRepository('AppBundle:DiaryEntry')->findAllDesc();
         return $this->render(
             'diary/index.html.twig',
             ['diaryEntries' => $diaryEntries]
+        );
+    }
+
+    /**
+     * @Route("/show/{id}", name="show")
+     * @param int $id Diary entry id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+    public function showAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        /** @var DiaryEntry $diaryEntry */
+        $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
+        $headline = $this->get('app.utils.text')->getHeadline($diaryEntry->getNote());
+        return $this->render(
+            'diary/show.html.twig',
+            [
+                'headline' => $headline,
+                'diaryEntry' => $diaryEntry
+            ]
         );
     }
 }
