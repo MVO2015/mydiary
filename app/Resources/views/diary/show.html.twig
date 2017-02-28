@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    <h2 class="timestamp">{{ diaryEntry.datetime | date("Y-m-d h:i") }}</h2>
+{% endblock %}
+
+{% block body %}
+    <div class="headline">
+        {{ headline }}
+    </div>
+
+    <p class="note">
+        {{ diaryEntry.note }}
+    </p>
+{% endblock %}

@@ -10,3 +10,29 @@
     padding: 3px;
     margin: 3px;
 }
+
+.note {
+    font-family: scrgunny, cursive;
+    font-size: 30px;
+}
+
+.headline {
+    font-family: typewriter, monospace;
+    font-size: 30px;
+    color: #b40000;
+}
+
+.timestamp {
+    font-family: typewriter, monospace;
+    font-size: 20px;
+}
+
+@font-face {
+    font-family: scrgunny; /* deklarace fontu */
+    src: url("scrgunny.TTF"); /* propojení na umístìní souboru */
+}
+
+@font-face {
+    font-family: typewriter; /* deklarace fontu */
+    src: url("Albertsthal%20Typewriter.ttf"); /* propojení na umístìní souboru */
+}
