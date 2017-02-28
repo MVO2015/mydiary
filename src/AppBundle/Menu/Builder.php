@@ -20,8 +20,7 @@ class Builder implements ContainerAwareInterface
             ]
         );
 
-        $menu->addChild('Add', array('route' => 'add'));
-        $menu->addChild('Home', array('route' => 'homepage'));
+        $menu->addChild('＋', array('route' => 'add'));
 
         // access services from the container!
 //           $em = $this->container->get('doctrine')->getManager();
@@ -33,7 +32,8 @@ class Builder implements ContainerAwareInterface
 //               'routeParameters'))) => array('id' => $blog->getId())
 //           ));
 
-        $menu->addChild('Diary', array('route' => 'index'));
+        $menu->addChild('Index', array('route' => 'index'));
+        $menu->addChild('Pagination', array('route' => 'paginate'));
         $menu->addChild('Tags')->setAttribute('dropdown',true)
             ->setUri('#')
             ->setLinkAttributes(['data-toggle' => 'dropdown', 'class' => 'dropdown-toggle'])

@@ -21,9 +21,11 @@ class DiaryEntryRepository extends EntityRepository
 
     /**
      * Get all entries
+     * @param int $currentPage Current page number
+     * @param int $limit Maximal number of records on one page
      * @return Paginator
      */
-    public function getAllEntries($currentPage = 1)
+    public function getAllEntries($currentPage = 1, $limit)
     {
         // Create our query
         $query = $this->createQueryBuilder('diary_entry')
@@ -31,7 +33,7 @@ class DiaryEntryRepository extends EntityRepository
             ->getQuery();
 
         // No need to manually get get the result ($query->getResult())
-        $paginator = $this->paginate($query, $currentPage);
+        $paginator = $this->paginate($query, $currentPage, $limit);
         return $paginator;
     }
 

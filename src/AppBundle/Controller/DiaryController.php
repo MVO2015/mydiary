@@ -141,16 +141,31 @@ class DiaryController extends Controller
     }
 
     /**
-     * @Route("/index", name="index")
+     * @Route("/index/{page}", name="index")
      * @return Response
      */
-    public function indexAction()
+    public function indexAction($page = 1)
     {
+        $limit = 5;
         $em = $this->getDoctrine()->getManager();
-        $diaryEntries = $em->getRepository('AppBundle:DiaryEntry')->findAllDesc();
+        /** @var DiaryEntry $diaryEntry */
+        $diaryEntries = $em->getRepository("AppBundle:DiaryEntry")->getAllEntries($page, $limit);
+
+        // You can also call the count methods (check PHPDoc for `paginate()`)
+        $totalEntriesReturned = $diaryEntries->getIterator()->count();
+
+        # Count of ALL posts (ie: `20` posts)
+        $totalEntries = $diaryEntries->count();
+
+        # ArrayIterator
+        $iterator = $diaryEntries->getIterator();
+
+        $maxPages = ceil($totalEntries / $limit);
+        $thisPage = $page;
+        // Pass through the 3 above variables to calculate pages in twig
         return $this->render(
             'diary/index.html.twig',
-            ['diaryEntries' => $diaryEntries]
+            ['diaryEntries' => $iterator, 'maxPages' => $maxPages, 'thisPage' => $thisPage]
         );
     }
 
@@ -178,12 +193,14 @@ class DiaryController extends Controller
      * Controller Index action with paginator
      * @Route("/paginate/{page}", name="paginate")
      * @param integer $page The current page passed via URL
+     * @return Response
      */
     public function paginateAction($page = 1)
     {
+        $limit = 1;
         $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntry $diaryEntry */
-        $diaryEntries = $em->getRepository("AppBundle:DiaryEntry")->getAllEntries();
+        $diaryEntries = $em->getRepository("AppBundle:DiaryEntry")->getAllEntries($page, $limit);
 
         // You can also call the count methods (check PHPDoc for `paginate()`)
         $totalEntriesReturned = $diaryEntries->getIterator()->count();
@@ -193,11 +210,11 @@ class DiaryController extends Controller
 
         # ArrayIterator
         $iterator = $diaryEntries->getIterator();
+        $headline = $this->get('app.utils.text')->getHeadline($iterator[0]->getNote());
 
-        $limit = 5;
         $maxPages = ceil($totalEntries / $limit);
         $thisPage = $page;
         // Pass through the 3 above variables to calculate pages in twig
-        return $this->render('diary/pagination.html.twig', ['diaryEntries' => $iterator, 'maxPages' => $maxPages, 'thisPage' => $thisPage]);
+        return $this->render('diary/pagination.html.twig', ['headline' => $headline, 'diaryEntry' => $iterator[0], 'maxPages' => $maxPages, 'thisPage' => $thisPage]);
     }
 }
