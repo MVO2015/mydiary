@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <button onclick="fetchData()">Load next</button>
+    <div id="ajaxBody">
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function fetchData() {
+            xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "{{ path('get_entry', {page: thisPage}) }}", true);
+            xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.send();
+
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    diaryEntryGenerator(xhttp.responseText);
+                }
+            }
+        }
+
+        function diaryEntryGenerator(response) {
+            var arr = JSON.parse(response);
+            var datetime = arr['datetime'];
+            var title = arr['title'];
+            var note = arr['note'];
+            var out = "";
+            out += '<h2 class="timestamp">' + datetime + '</h2>' +
+                    '<div class="entryTitle">' + title + '</div>' +
+                    '<p class="note">' + note + '</p>';
+
+            $('#ajaxBody').html(out);
+        }
+    </script>
+{% endblock %}

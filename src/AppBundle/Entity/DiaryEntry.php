@@ -136,4 +136,69 @@ class DiaryEntry
         }
         return $tempTags;
     }
+
+    /**
+     * Shorten text to specified maximum and append "...".
+     *
+     * @param int $length Maximum length without "..."
+     * @return string Short text
+     */
+    private function shorten($text, $length=200)
+    {
+        if (strlen($text) <= $length) {
+            return $text;
+        }
+        $pos=strpos($text, ' ', $length);
+        $shortText = substr($text,0,$pos) . "...";
+        return strlen($shortText) < strlen($text) ? $shortText : $text;
+    }
+
+    /**
+     * Get the first sentence
+     * @return string The first sentence
+     */
+    public function getFirstSentence() {
+
+        $string = preg_replace("/[\s]/", " ", $this->getNote()); // replace whitespaces with spaces
+
+        $dot = strpos($string, '. ');
+        $exc = strpos($string, '! ');
+        $que = strpos($string, '? ');
+
+        $string = trim($string);
+        $len = strlen($string);
+
+        $dot = $dot ? $dot : $len;
+        $exc = $exc ? $exc : $len;
+        $que = $que ? $que : $len;
+
+        $pos = min($dot, $exc, $que);
+        $result = substr($string, 0, $pos + 1);
+        // do not show last dot
+        if (substr($result, - 1, 1) == '.')
+        {
+            $result = substr($result, 0, -1);
+        }
+        return $result;
+    }
+
+    /**
+     * Get headline of an article as first sentence or shorten first sentence
+     * @param $content
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->shorten($this->getFirstSentence());
+    }
+
+    /**
+     * Shorten note to specified maximum and append "...".
+     *
+     * @return string Short text
+     */
+    public function getShort()
+    {
+        return $this->shorten($this->getNote());
+    }
 }

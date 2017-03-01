@@ -15,15 +15,15 @@
         </thead>
         <tbody>
         {% for diaryEntry in diaryEntries %}
-            <tr onclick="window.location.href='{{ path('edit', {'id': diaryEntry.id}) }}';">
+            <tr onclick="window.location.href='{{ path('paginate', {'page': diaryEntry.id}) }}';">
                 <td>{{ diaryEntry.datetime | date("Y-m-d h:i") }}</td>
-                <td>{{ diaryEntry.note }}</td>
+                <td>{{ diaryEntry.getTitle() }}</td>
                 <td>{{ diaryEntry.category }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    {{ include('paginator.html.twig') }}
+    {{ include('diary/index.paginator.html.twig') }}
 
 {% endblock %}

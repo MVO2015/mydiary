@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use AppBundle\Entity\DiaryEntryRepository;
 
 /**
  * Class DiaryController
@@ -113,7 +114,7 @@ class DiaryController extends Controller
                 'form' => $form->createView(),
                 'id' => $diaryEntry->getId(), // for Delete button
                 // for Modal - delete confirmation
-                'shortNote' => $this->get('app.utils.text')->shorten($diaryEntry->getNote()),
+                'shortNote' => $diaryEntry->getShort(),
                 'debug' => $debug
             ));
         }
@@ -146,13 +147,14 @@ class DiaryController extends Controller
      */
     public function indexAction($page = 1)
     {
-        $limit = 5;
+        $limit = 10;
         $em = $this->getDoctrine()->getManager();
-        /** @var DiaryEntry $diaryEntry */
-        $diaryEntries = $em->getRepository("AppBundle:DiaryEntry")->getAllEntries($page, $limit);
+        /** @var DiaryEntryRepository $repository */
+        $repository = $em->getRepository("AppBundle:DiaryEntry");
+        $diaryEntries = $repository->getAllEntries($page, $limit);
 
         // You can also call the count methods (check PHPDoc for `paginate()`)
-        $totalEntriesReturned = $diaryEntries->getIterator()->count();
+        // $totalEntriesReturned = $diaryEntries->getIterator()->count();
 
         # Count of ALL posts (ie: `20` posts)
         $totalEntries = $diaryEntries->count();
@@ -176,17 +178,10 @@ class DiaryController extends Controller
      */
     public function showAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
+        //$em = $this->getDoctrine()->getManager();
         /** @var DiaryEntry $diaryEntry */
-        $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-        $headline = $this->get('app.utils.text')->getHeadline($diaryEntry->getNote());
-        return $this->render(
-            'diary/show.html.twig',
-            [
-                'headline' => $headline,
-                'diaryEntry' => $diaryEntry
-            ]
-        );
+        //$diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
+        return $this->render('diary/ajax.html.twig', ['thisPage' => $id]);
     }
 
     /**
@@ -199,22 +194,23 @@ class DiaryController extends Controller
     {
         $limit = 1;
         $em = $this->getDoctrine()->getManager();
-        /** @var DiaryEntry $diaryEntry */
-        $diaryEntries = $em->getRepository("AppBundle:DiaryEntry")->getAllEntries($page, $limit);
+        /** @var DiaryEntryRepository $repository */
+        $repository = $em->getRepository("AppBundle:DiaryEntry");
+        $diaryEntries = $repository->getAllEntries($page, $limit);
 
         // You can also call the count methods (check PHPDoc for `paginate()`)
-        $totalEntriesReturned = $diaryEntries->getIterator()->count();
+//        $totalEntriesReturned = $diaryEntries->getIterator()->count();
 
         # Count of ALL posts (ie: `20` posts)
         $totalEntries = $diaryEntries->count();
 
         # ArrayIterator
         $iterator = $diaryEntries->getIterator();
-        $headline = $this->get('app.utils.text')->getHeadline($iterator[0]->getNote());
 
         $maxPages = ceil($totalEntries / $limit);
         $thisPage = $page;
         // Pass through the 3 above variables to calculate pages in twig
-        return $this->render('diary/pagination.html.twig', ['headline' => $headline, 'diaryEntry' => $iterator[0], 'maxPages' => $maxPages, 'thisPage' => $thisPage]);
+        return $this->render('diary/pagination.html.twig',
+            ['diaryEntry' => $iterator[0], 'maxPages' => $maxPages, 'thisPage' => $thisPage]);
     }
 }
