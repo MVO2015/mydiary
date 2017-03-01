@@ -26,6 +26,7 @@ class DiaryController extends Controller
      */
     public function homeAction()
     {
+        $this->get("app.logic")->init();
         return $this->render(
             'diary/home.html.twig'
         );

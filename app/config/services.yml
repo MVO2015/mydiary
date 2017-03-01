@@ -7,6 +7,6 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
-    app.utils.text:
-        class: AppBundle\Utils\Text
+    app.logic:
+      class: AppBundle\Logic
 
