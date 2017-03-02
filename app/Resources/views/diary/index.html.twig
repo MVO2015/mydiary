@@ -15,7 +15,7 @@
         </thead>
         <tbody>
         {% for diaryEntry in diaryEntries %}
-            <tr onclick="window.location.href='{{ path('paginate', {'page': diaryEntry.id}) }}';">
+            <tr onclick="window.location.href='{{ path('show', {'id': diaryEntry.id}) }}';">
                 <td>{{ diaryEntry.datetime | date("Y-m-d h:i") }}</td>
                 <td>{{ diaryEntry.getTitle() }}</td>
                 <td>{{ diaryEntry.category }}</td>

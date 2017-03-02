@@ -64,4 +64,20 @@ class DiaryEntryRepository extends EntityRepository
 
         return $paginator;
     }
+
+    public function getNextEntryByDateTime($actualId)
+    {
+        /** @var DiaryEntry $actualEntry */
+        $actualEntry = $this->find($actualId);
+        $dateTime = $actualEntry->getDateTime()->format("Y-m-d h:i:s");
+
+        $query = $this->createQueryBuilder('de')
+            ->select('de.id')
+            ->where("de.dateTime > :dt")
+                ->setParameter(":dt", $dateTime)
+            ->orderBy('de.dateTime', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery();
+        return $query->getResult();
+    }
 }

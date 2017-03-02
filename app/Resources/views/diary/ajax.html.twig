@@ -1,7 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <button onclick="fetchData()">Load next</button>
+    <button onclick="fetchData('{{ path('get_prev_entry') }}')">Prev</button>
+    <button onclick="fetchData('{{ path('get_entry_by_id', {id: nextId}) }}')">Next</button>
     <div id="ajaxBody">
 
     </div>
@@ -9,9 +10,14 @@
 
 {% block javascripts %}
     <script>
-        function fetchData() {
+        $(document).ready(function() {
+            var url = '{{ path('get_entry_by_id', {id: id}) }}';
+            fetchData(url);
+        });
+
+        function fetchData(url) {
             xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "{{ path('get_entry', {page: thisPage}) }}", true);
+            xhttp.open("GET", url, true);
             xhttp.setRequestHeader("Content-type", "application/json");
             xhttp.send();
 

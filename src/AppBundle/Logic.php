@@ -2,55 +2,69 @@
 
 namespace AppBundle;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class Logic
 {
     /**
-     * Actual diary page
-     * @var int
+     * @param Request $request
      */
-    private $actualPage;
-
-    public function init()
+    public function init($request)
     {
-        $this->setActualPage(1);
+        $this->setActualPageNumber($request, 1);
     }
 
     /**
      * Next page - increase page number
+     * @param Request $request
      * @param $pageCount
      * @return int Actual page number after performing action
      */
-    public function nextPage($pageCount)
+    public function nextPageNumber($request, $pageCount)
     {
-        if ($this->actualPage < $pageCount) {
-            $this->actualPage = $this->actualPage + 1;
+        $actualPage = $this->getActualPageNumber($request);
+        if ($actualPage < $pageCount) {
+            $actualPage++;
         }
-        return $this->actualPage;
+        return $this->setActualPageNumber($request, $actualPage);
     }
 
     /**
      * Previous page - decrease page number
+     * @param Request $request
      * @return int Actual page number after performing action
      */
-    public function prevPage()
+    public function prevPageNumber($request)
     {
-        if ($this->actualPage > 1) {
-            $this->actualPage--;
+        $actualPage = $this->getActualPageNumber($request);
+        if ($actualPage > 1) {
+            $actualPage--;
         }
-        return $this->actualPage;
+        return $this->setActualPageNumber($request, $actualPage);
     }
 
     /**
      * Get actual page number
+     * @param Request $request
      * @return int Page number
      */
-    public function getActualPage()
+    public function getActualPageNumber($request)
     {
-        return $this->actualPage;
+        $actualPage = $request->getSession()->get('actualPage');
+        if (gettype($actualPage) != 'integer') {
+            $this->init($request);
+        }
+        return $actualPage;
     }
 
-    public function setActualPage($page)
+    /**
+     * @param Request $request
+     * @param int $page
+     * @return mixed
+     */
+    public function setActualPageNumber($request, $page)
     {
-        $this->actualPage = $page;
+        $request->getSession()->set('actualPage', $page);
+        return $page;
     }
 }

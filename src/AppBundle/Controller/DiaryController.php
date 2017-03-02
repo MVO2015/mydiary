@@ -174,15 +174,17 @@ class DiaryController extends Controller
 
     /**
      * @Route("/show/{id}", name="show")
+     * @param Request $request
      * @param int $id Diary entry id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function showAction($id)
+    public function showAction(Request $request, $id)
     {
-        //$em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntry $diaryEntry */
-        //$diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-        return $this->render('diary/ajax.html.twig', ['thisPage' => $id]);
+        $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
+//        $this->get('app.logic')->setActualPageNumber($request, $pageNumber);
+        return $this->render('diary/ajax.html.twig', ['id' => $id]);
     }
 
     /**
