@@ -15,16 +15,21 @@ class DiaryEntryApiController extends FOSRestController
      * @Rest\Get("/api/entry/id/{id}", name="get_entry_by_id")
      * @param Request $request
      * @param $id
-     * @return View|null|object
+     * @return array
      */
     public function getEntryByIdAction(Request $request, $id)
     {
         $diaryEntry = $this->getDoctrine()->getRepository('AppBundle:DiaryEntry')->find($id);
+        $rowNumArr = $this->getDoctrine()->getRepository('AppBundle:DiaryEntry')->getRowNum($id);
+        return $rowNumArr;
+        /** @var DiaryEntry $nextEntry */
+        $nextEntry = $this->getDoctrine()->getRepository('AppBundle:DiaryEntry')
+            ->getAllEntries($rowNumArr[0]['id'], 1)->getIterator()->current();
         $result = [];
         $result['datetime'] = $diaryEntry->getDateTime();
         $result['title'] = $diaryEntry->getTitle();
         $result['note'] = $diaryEntry->getNote();
-        $result['nextId'] = $this->getDoctrine()->getRepository('AppBundle:DiaryEntry')->getNextEntryByDateTime($id);
+        $result['nextId'] = $nextEntry->getId();
         return $result;
     }
 
@@ -74,7 +79,7 @@ class DiaryEntryApiController extends FOSRestController
             return new View("Entry not found", Response::HTTP_NOT_FOUND);
         }
         /** @var DiaryEntry $diaryEntry */
-        $diaryEntry = $diaryEntries->getIterator()[0];
+        $diaryEntry = $diaryEntries->getIterator()->current();
         $result = [];
         $result['datetime'] = $diaryEntry->getDateTime();
         $result['title'] = $diaryEntry->getTitle();

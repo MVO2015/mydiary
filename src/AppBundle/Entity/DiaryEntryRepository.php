@@ -80,4 +80,17 @@ class DiaryEntryRepository extends EntityRepository
             ->getQuery();
         return $query->getResult();
     }
+
+    public function getRowNum($id)
+    {
+        $query = $this->createQueryBuilder('diary_entry')
+            ->select('diary_entry.id')
+            ->orderBy('diary_entry.dateTime', 'ASC')
+            ->getQuery();
+        $idArr = $query->getResult();
+        //TODO get row number problem
+        return $idArr['id'];
+        $rowNum = array_search($id, $idArr['id']);
+        return $rowNum;
+    }
 }

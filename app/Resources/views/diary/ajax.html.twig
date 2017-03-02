@@ -2,7 +2,7 @@
 
 {% block body %}
     <button onclick="fetchData('{{ path('get_prev_entry') }}')">Prev</button>
-    <button onclick="fetchData('{{ path('get_entry_by_id', {id: nextId}) }}')">Next</button>
+    <button onclick="fetchData('{{ path('get_next_entry') }}')">Next</button>
     <div id="ajaxBody">
 
     </div>
