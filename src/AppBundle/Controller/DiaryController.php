@@ -24,7 +24,7 @@ class DiaryController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function homeAction($request)
+    public function homeAction(Request $request)
     {
         $this->get("app.logic")->init($request);
         return $this->render(
@@ -168,23 +168,20 @@ class DiaryController extends Controller
         // Pass through the 3 above variables to calculate pages in twig
         return $this->render(
             'diary/index.html.twig',
-            ['diaryEntries' => $iterator, 'maxPages' => $maxPages, 'thisPage' => $thisPage]
+            ['diaryEntries' => $iterator, 'maxPages' => $maxPages, 'thisPage' => $thisPage, 'limit' => $limit]
         );
     }
 
     /**
-     * @Route("/show/{id}", name="show")
+     * @Route("/show/offset/{offset}", name="show_by_offset")
      * @param Request $request
-     * @param int $id Diary entry id
+     * @param int $offset Diary entry offset
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function showAction(Request $request, $id)
+    public function showByOffsetAction(Request $request, $offset)
     {
-        $em = $this->getDoctrine()->getManager();
-        /** @var DiaryEntry $diaryEntry */
-        $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-//        $this->get('app.logic')->setActualPageNumber($request, $pageNumber);
-        return $this->render('diary/ajax.html.twig', ['id' => $id]);
+        $maxOffset =  $this->getDoctrine()->getRepository('AppBundle:DiaryEntry')->getMaxOffset();
+        return $this->render('diary/ajax.html.twig', ['offset' => $offset, 'maxOffset' => $maxOffset]);
     }
 
     /**

@@ -1,21 +1,26 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <button onclick="fetchData('{{ path('get_prev_entry') }}')">Prev</button>
-    <button onclick="fetchData('{{ path('get_next_entry') }}')">Next</button>
+    <button onclick="fetchData(prevOffset());">Prev</button>
+    <button onclick="fetchData(nextOffset());">Next</button>
     <div id="ajaxBody">
-
+        Loading...
     </div>
 {% endblock %}
 
 {% block javascripts %}
     <script>
+        var actualOffset = 0;
+        var maxOffset = 0;
         $(document).ready(function() {
-            var url = '{{ path('get_entry_by_id', {id: id}) }}';
-            fetchData(url);
+            var requiredOffset = '{{ offset }}';
+            maxOffset = Number({{ maxOffset }});
+            fetchData(requiredOffset);
         });
 
-        function fetchData(url) {
+        function fetchData(paramOffset) {
+            var url = '{{ path('get_entry_by_offset', {offset: 'offset_value'}) }}';
+            url = url.replace("offset_value", paramOffset);
             xhttp = new XMLHttpRequest();
             xhttp.open("GET", url, true);
             xhttp.setRequestHeader("Content-type", "application/json");
@@ -24,6 +29,7 @@
             xhttp.onreadystatechange = function () {
                 if (xhttp.readyState == 4 && xhttp.status == 200) {
                     diaryEntryGenerator(xhttp.responseText);
+                    actualOffset = Number(paramOffset)
                 }
             }
         }
@@ -40,5 +46,20 @@
 
             $('#ajaxBody').html(out);
         }
+
+        function prevOffset() {
+            if (actualOffset > 0) {
+                return actualOffset - 1;
+            }
+            return 0;
+        }
+
+        function nextOffset() {
+            if (actualOffset < maxOffset) {
+                return actualOffset + 1;
+            }
+            return maxOffset;
+        }
+
     </script>
 {% endblock %}

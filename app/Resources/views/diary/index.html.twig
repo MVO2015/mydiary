@@ -14,12 +14,14 @@
         </tr>
         </thead>
         <tbody>
+        {% set computedOffset = (thisPage - 1) * limit %}
         {% for diaryEntry in diaryEntries %}
-            <tr onclick="window.location.href='{{ path('show', {'id': diaryEntry.id}) }}';">
+            <tr onclick="window.location.href='{{ path('show_by_offset', {offset: computedOffset}) }}';">
                 <td>{{ diaryEntry.datetime | date("Y-m-d h:i") }}</td>
                 <td>{{ diaryEntry.getTitle() }}</td>
                 <td>{{ diaryEntry.category }}</td>
             </tr>
+            {% set computedOffset = computedOffset + 1 %}
         {% endfor %}
         </tbody>
     </table>

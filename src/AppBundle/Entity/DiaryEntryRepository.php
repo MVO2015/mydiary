@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\Validator\Constraints\All;
 
 /**
  * DiaryEntryRepository
@@ -29,13 +30,37 @@ class DiaryEntryRepository extends EntityRepository
     {
         // Create our query
         $query = $this->createQueryBuilder('diary_entry')
-            ->orderBy('diary_entry.dateTime', 'ASC')
-            ->getQuery();
+        ->orderBy('diary_entry.dateTime', 'ASC')
+        ->getQuery();
 
         // No need to manually get get the result ($query->getResult())
         $paginator = $this->paginate($query, $currentPage, $limit);
         return $paginator;
     }
+
+    /**
+     * Get diary entry by offset
+     * @param int $offset
+     * @return mixed
+     */
+    public function getEntryByOffset($offset = 0)
+    {
+        $query = $this->createQueryBuilder('diary_entry')
+        ->orderBy('diary_entry.dateTime', 'ASC')
+        ->setFirstResult($offset)
+        ->setMaxResults(1)
+        ->getQuery();
+        return current($query->getResult());
+    }
+
+    public function getMaxOffset()
+    {
+        $query = $this->createQueryBuilder('diary_entry')
+        ->select('count(diary_entry.id)')
+        ->getQuery();
+        return ($query->getSingleScalarResult() - 1);
+    }
+
 
     /**
      * Paginator Helper
@@ -48,9 +73,9 @@ class DiaryEntryRepository extends EntityRepository
      *     $paginator->count() # Count of ALL posts (ie: `20` posts)
      *     $paginator->getIterator() # ArrayIterator
      *
-     * @param Query $dql   DQL Query Object
-     * @param integer            $page  Current page (defaults to 1)
-     * @param integer            $limit The total number per page (defaults to 5)
+     * @param Query $dql DQL Query Object
+     * @param integer $page Current page (defaults to 1)
+     * @param integer $limit The total number per page (defaults to 5)
      *
      * @return Paginator
      */
@@ -59,8 +84,8 @@ class DiaryEntryRepository extends EntityRepository
         $paginator = new Paginator($dql);
 
         $paginator->getQuery()
-            ->setFirstResult($limit * ($page - 1)) // Offset
-            ->setMaxResults($limit); // Limit
+        ->setFirstResult($limit * ($page - 1)) // Offset
+        ->setMaxResults($limit); // Limit
 
         return $paginator;
     }
@@ -72,21 +97,21 @@ class DiaryEntryRepository extends EntityRepository
         $dateTime = $actualEntry->getDateTime()->format("Y-m-d h:i:s");
 
         $query = $this->createQueryBuilder('de')
-            ->select('de.id')
-            ->where("de.dateTime > :dt")
-                ->setParameter(":dt", $dateTime)
-            ->orderBy('de.dateTime', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery();
+        ->select('de.id')
+        ->where("de.dateTime > :dt")
+        ->setParameter(":dt", $dateTime)
+        ->orderBy('de.dateTime', 'ASC')
+        ->setMaxResults(1)
+        ->getQuery();
         return $query->getResult();
     }
 
     public function getRowNum($id)
     {
         $query = $this->createQueryBuilder('diary_entry')
-            ->select('diary_entry.id')
-            ->orderBy('diary_entry.dateTime', 'ASC')
-            ->getQuery();
+        ->select('diary_entry.id')
+        ->orderBy('diary_entry.dateTime', 'ASC')
+        ->getQuery();
         $idArr = $query->getResult();
         //TODO get row number problem
         return $idArr['id'];
