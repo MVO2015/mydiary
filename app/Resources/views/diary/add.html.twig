@@ -1,10 +1,25 @@
 {% extends 'diary/entry.html.twig' %}
 
 {% block header %}
-    Add diary entry
+    <div class="entryTitle"></div>
 {% endblock %}
 
 {% block form_buttons %}
-    {{ form_widget(form.save) }}
+    {{ form_widget(form.save, {attr: {class: 'diarybtn note'}}) }}
     {{ include("diary/cancel.html.twig") }}
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $('.note').bind('input propertychange', function () {
+        $('.entryTitle').html(firstSentence($(this).val()));
+    });
+
+    function firstSentence(string) {
+        var dotArray = string.split(". ");
+        var queArray = dotArray[0].split("? ");
+        var excArray = queArray[0].split("! ");
+        return excArray[0];
+    }
+</script>
 {% endblock %}

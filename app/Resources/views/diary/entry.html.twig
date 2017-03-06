@@ -8,8 +8,7 @@
         <div class="row">
             <div class='col-sm-3'>
                 <div class="form-group">
-                    {{ form_label(form.dateTime, 'Date / time:') }}
-                    <div class='input-group date' id='datetimepicker1'>
+                    <div class='input-group date timestamp' id='datetimepicker1'>
                         {#<input type='text' class="form-control" value="2017-01-01 12:00"/>#}
                         {{ form_widget(form.dateTime, {attr: {
                             'class': 'form-control'} }) }}
@@ -32,9 +31,8 @@
             </script>
         </div>
         <div class="row col-sm-12 form-group">
-            {{ form_label(form.note, 'Note:') }}
             {{ form_widget(form.note, {attr: {
-                'class': 'form-control',
+                'class': 'form-control note',
                 'rows': '5'} }) }}
         </div>
 

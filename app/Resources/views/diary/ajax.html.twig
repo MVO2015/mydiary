@@ -1,10 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
+{% block pageHeader %}
     <button onclick="fetchData(prevOffset());">Prev</button>
     <button onclick="fetchData(nextOffset());">Next</button>
+{% endblock %}
+
+{% block body %}
     <div id="ajaxBody">
-        Loading...
+
     </div>
 {% endblock %}
 
@@ -19,6 +22,7 @@
         });
 
         function fetchData(paramOffset) {
+            $('#ajaxBody').html(loaderMarkup());
             var url = '{{ path('get_entry_by_offset', {offset: 'offset_value'}) }}';
             url = url.replace("offset_value", paramOffset);
             xhttp = new XMLHttpRequest();
@@ -59,6 +63,10 @@
                 return actualOffset + 1;
             }
             return maxOffset;
+        }
+
+        function loaderMarkup() {
+            return '<div class="loader" id="loader-6"><span></span>\n<span></span>\n<span></span>\n<span></span>\n</div>';
         }
 
     </script>
