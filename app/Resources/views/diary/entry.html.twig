@@ -31,6 +31,10 @@
             </script>
         </div>
         <div class="row col-sm-12 form-group">
+            {{ form_widget(form.title, {attr: {
+                'class': 'form-control entryTitle no-border'} }) }}
+        </div>
+        <div class="row col-sm-12 form-group">
             {{ form_widget(form.note, {attr: {
                 'class': 'form-control note',
                 'rows': '5'} }) }}
@@ -47,9 +51,9 @@
             {{ form_widget(form.tempTags) }}
             {#{{ form_label(form.tempTags, 'Tags:') }}#}
             {#{{ form_widget(form.tempTags, {#}
-                {#attr: {#}
-                    {#'class': 'form-control',#}
-                    {#'multiple': 'multiple'} }) }}#}
+            {#attr: {#}
+            {#'class': 'form-control',#}
+            {#'multiple': 'multiple'} }) }}#}
         </div>
 
     </div>

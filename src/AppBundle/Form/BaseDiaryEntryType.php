@@ -25,6 +25,7 @@ class BaseDiaryEntryType extends AbstractType
                 'html5' => false,
             ]
         )
+        ->add('title', TextType::class, ['label' => "Title: "])
         ->add('note', TextareaType::class, ['label' => "Note: "])
         ->add('category', ChoiceType::class, [
                 'label' => 'Category: ',

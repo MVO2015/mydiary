@@ -1,7 +1,7 @@
 {% extends 'diary/entry.html.twig' %}
 
 {% block header %}
-    <div class="entryTitle"></div>
+    Add what's new ...
 {% endblock %}
 
 {% block form_buttons %}
@@ -12,7 +12,7 @@
 {% block javascripts %}
 <script>
     $('.note').bind('input propertychange', function () {
-        $('.entryTitle').html(firstSentence($(this).val()));
+        $('.entryTitle').attr('placeholder', (firstSentence($(this).val())));
     });
 
     function firstSentence(string) {

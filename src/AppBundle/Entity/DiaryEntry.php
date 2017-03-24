@@ -19,18 +19,20 @@ class DiaryEntry
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
     /**
      * @ORM\Column(type="datetime")
      * @var DateTime
      */
     private $dateTime;
-    /**
-     * @ORM\Column(type="text")
-     */
+
+    /** @ORM\Column(type="text") */
     private $note;
-    /**
-     * @ORM\Column(type="string")
-     */
+
+    /** @ORM\Column(type="text") */
+    private $title;
+
+    /** @ORM\Column(type="string") */
     private $category;
 
     /**
@@ -68,6 +70,22 @@ class DiaryEntry
     public function setNote($note)
     {
         $this->note = $note;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param mixed $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
 
     /**
@@ -187,7 +205,7 @@ class DiaryEntry
      * @param $content
      * @return string
      */
-    public function getTitle()
+    public function createTitle()
     {
         return $this->shorten($this->getFirstSentence());
     }
