@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block script %}
+    <script src="{{ asset('js/turn.js') }}"></script>
+{% endblock %}
+
+{% block header %}
+    Book
+{% endblock %}
+
+{% block body %}
+    <div id="diarybook" class="flipbook">
+        <div class="hard">My diary</div>
+        {% for page in pages %}
+            <div>
+                {{ page.note }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

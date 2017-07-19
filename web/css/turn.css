@@ -1,0 +1,12 @@
+.flipbook{
+    width:800px;
+    height:600px;
+}
+/*.flipbook .page{*/
+    /*width:400px;*/
+    /*height:600px;*/
+/*}*/
+
+.flipbook .turn-page{
+    background-color:#FEE;
+}
