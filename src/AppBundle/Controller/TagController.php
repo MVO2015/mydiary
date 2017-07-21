@@ -125,7 +125,7 @@ class TagController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy, $sort);
-        return $this->render("tag/collection.html.twig", ['tags' => $tags]);
+        return $this->render("tag/collection.page.html.twig", ['tags' => $tags]);
     }
 
     /**

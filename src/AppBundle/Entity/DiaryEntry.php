@@ -126,6 +126,22 @@ class DiaryEntry
         return $this->tags;
     }
 
+    /**
+     * Get tags, delimited with comma
+     *
+     * @return string of tags, delimited with comma
+     */
+    public function getTextTags()
+    {
+        $tagsArray = $this->getTags();
+        $textTags = [];
+        /** @var Tag $oneTag */
+        foreach ($tagsArray as $oneTag) {
+            $textTags[] = $oneTag->getText();
+        }
+        return implode(", ", $textTags);
+    }
+
     public function getTempTags()
     {
         $tagsArray = $this->getTags();
