@@ -6,7 +6,7 @@
     {{ form_start(form) }}
     <div class="container">
         <div class="row">
-            <div class='col-sm-3'>
+            <div class='col-sm-6'>
                 <div class="form-group">
                     <div class='input-group date timestamp' id='datetimepicker1'>
                         {#<input type='text' class="form-control" value="2017-01-01 12:00"/>#}
@@ -37,19 +37,10 @@
         </div>
 
         <div class="row col-sm-6 form-group">
-            {{ form_label(form.category, 'Category:') }}
-            {{ form_widget(form.category, {attr: {
-                'class': 'form-control',
-                'multiple': 'multiple'} }) }}
-        </div>
-
-        <div class="row col-sm-6 form-group">
-            {{ form_widget(form.tempTags) }}
-            {#{{ form_label(form.tempTags, 'Tags:') }}#}
-            {#{{ form_widget(form.tempTags, {#}
-                {#attr: {#}
-                    {#'class': 'form-control',#}
-                    {#'multiple': 'multiple'} }) }}#}
+            {{ form_widget(form.tempTags, {
+                attr: {
+                    'class': 'form-control',
+                    'multiple': 'multiple'} }) }}
         </div>
 
     </div>

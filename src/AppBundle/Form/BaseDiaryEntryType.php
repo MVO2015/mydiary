@@ -25,26 +25,18 @@ class BaseDiaryEntryType extends AbstractType
                 'html5' => false,
             ]
         )
-        ->add('note', TextareaType::class, ['label' => "Note: "])
-        ->add('category', ChoiceType::class, [
-                'label' => 'Category: ',
-            ]
-        )
+        ->add('note', TextareaType::class,
+            ['label' => "Note: ", 'data' => 'My diary entry...'])
         ->add('tempTags', ChoiceType::class,  [
             'multiple' => true,
             'required' => false,
-            'label' => "Tags: ",
             'attr' => ['class' => "form-control"],
             'choice_loader' => new ChoiceLoader($options['tag_choices']),
-            'choice_attr' => function ($val, $key, $index) {
-                return ['selected' => 'selected'];
-            },
         ])
-            ->add('tags', CollectionType::class, array(
-                'entry_type' => TagType::class,
-                'allow_add' => true,
-            ))
-            ->get('category')->resetViewTransformers();;
+        ->add('tags', CollectionType::class, array(
+            'entry_type' => TagType::class,
+            'allow_add' => true,
+        ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

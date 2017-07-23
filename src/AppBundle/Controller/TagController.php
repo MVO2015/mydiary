@@ -2,9 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Tag;
 use AppBundle\Form\TagType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -53,7 +55,7 @@ class TagController extends Controller
             SubmitType::class,
             [
                 'attr' => [
-                    'class' => "btn btn-lg btn-success"
+                    'class' => "diarybtn"
                 ]
             ]);
 
@@ -129,8 +131,9 @@ class TagController extends Controller
     }
 
     /**
+     * Delete tag from repository
      * @param $id
-     * @return bool
+     * @return bool True if success, otherwise false.
      */
     private function deleteTag($id)
     {
@@ -142,5 +145,48 @@ class TagController extends Controller
             return true;
         }
         return false;
+    }
+
+    /**
+     * @Route("/tag/new", name="tag_new")
+     * @param Request $request
+     * @return Response
+     */
+    public function addAction(Request $request)
+    {
+        $orderBy = "text";
+        $em = $this->getDoctrine()->getManager();
+        $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy);
+        $form = $this->createForm(TagType::class);
+        // buttons
+        $form->add(
+            'add',
+            SubmitType::class,
+            [
+                'attr' => [
+                    'class' => "diarybtn"
+                ]
+            ]);
+
+        $form->handleRequest($request);
+        // submit form
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('add')->isClicked()) {
+
+                /** @var Tag $tagFromForm */
+                $tagFromForm = new Tag();
+                $tagFromForm->setText($form->getData()['text']);
+                $em->persist($tagFromForm);
+                $em->flush();
+                $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy);
+            }
+        }
+
+        return $this->render(
+            ":tag:add.form.html.twig",
+            [
+                "form" => $form->createView(),
+                "tags" => $tags
+            ]);
     }
 }

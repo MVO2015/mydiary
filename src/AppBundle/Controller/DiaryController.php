@@ -39,8 +39,14 @@ class DiaryController extends Controller
      */
     public function addAction(Request $request)
     {
-        $entry = new DiaryEntry(new DateTime("now", new DateTimeZone("Europe/Prague")), "my diary entry", "diary");
-        $form = $this->createForm(BaseDiaryEntryType::class, $entry);
+        $em = $this->getDoctrine()->getManager();
+        $tags = $em->getRepository('AppBundle:Tag')->findAll();
+        $tag_choices = [];
+        foreach ($tags as $tag) {
+            $tag_choices[$tag->getText()]= $tag->getId();
+        }
+        $entry = new DiaryEntry(new DateTime("now", new DateTimeZone("Europe/Prague")), "", "");
+        $form = $this->createForm(BaseDiaryEntryType::class, $entry, ['tag_choices' => $tag_choices]);
         // buttons
         $form->add(
             'save',
@@ -55,20 +61,19 @@ class DiaryController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('save')->isClicked()) {
-                $diaryEntry = $form->getData();
-                $em = $this->getDoctrine()->getManager();
+                $entry=$form->getData();
                 $em->persist($entry);
                 $em->flush();
                 $this->addFlash(
                     'success',
-                    'Your entry "' . $diaryEntry->getNote() . '" has been saved!'
+                    'Your entry "' . $entry->getNote() . '" has been saved!'
                 );
             }
             return $this->redirectToRoute("index");
         }
 
         return $this->render('diary/add.html.twig', array(
-            'form' => $form->createView(),
+            'form' => $form->createView()
         ));
     }
 
@@ -211,6 +216,30 @@ class DiaryController extends Controller
         $thisPage = $page;
         // Pass through the 3 above variables to calculate pages in twig
         return $this->render('diary/pagination.html.twig',
-            ['diaryEntry' => $iterator[0], 'maxPages' => $maxPages, 'thisPage' => $thisPage]);
+            ['diaryEntry' => $iterator[0],
+                'maxPages' => $maxPages,
+                'thisPage' => $thisPage,
+                'tags' => $iterator[0]->getTags()
+            ]);
+    }
+
+    /**
+     * @Route("/delete_tag/{diaryEntryId}/{tagId}", name="delete_tag")
+     * @param int $diaryEntryId Diary entry id
+     * @param int $tagId Tag Id
+     * @return string
+     */
+    public function deleteTagAction($diaryEntryId, $tagId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($diaryEntryId);
+        if ($diaryEntry) {
+            $diaryEntry->removeTag($tagId);
+            $em->persist($diaryEntry);
+            $em->flush();
+        } else {
+            return new View("Diary entry not found", Response::HTTP_NOT_FOUND);
+        }
+        return $this->redirectToRoute('paginate');
     }
 }

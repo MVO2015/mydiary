@@ -33,13 +33,13 @@ class Builder implements ContainerAwareInterface
 //           ));
 
         $menu->addChild('Index', array('route' => 'index'));
-        $menu->addChild('Pagination', array('route' => 'paginate'));
+        $menu->addChild('Pages', array('route' => 'paginate'));
         $menu->addChild('Tags')->setAttribute('dropdown',true)
             ->setUri('#')
             ->setLinkAttributes(['data-toggle' => 'dropdown', 'class' => 'dropdown-toggle'])
             ->setChildrenAttribute('class', 'dropdown-menu')
-            ->addChild('Tag Index', ['route' => 'tag_index'])->getParent()
-            ->addChild('Tag Collection', ['route' => 'tag_collection']);
+            ->addChild('Index', ['route' => 'tag_index'])->getParent()
+            ->addChild('Add', ['route' => 'tag_new']);
 
         // ... add more children
 

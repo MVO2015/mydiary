@@ -10,7 +10,6 @@
         <tr>
             <th>Date and time</th>
             <th>Note</th>
-            <th>Category</th>
         </tr>
         </thead>
         <tbody>
@@ -19,7 +18,6 @@
             <tr onclick="window.location.href='{{ path('show_by_offset', {offset: computedOffset}) }}';">
                 <td>{{ diaryEntry.datetime | date("Y-m-d h:i") }}</td>
                 <td>{{ diaryEntry.getTitle() }}</td>
-                <td>{{ diaryEntry.category }}</td>
             </tr>
             {% set computedOffset = computedOffset + 1 %}
         {% endfor %}

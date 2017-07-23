@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block header %}
-    Pagination
+    Pages
 {% endblock %}
 
 {% block body %}
@@ -14,10 +14,8 @@
             <p class="note">
                 {{ diaryEntry.note }}
             </p>
-            <div>
-                Tags:<br>
-                {{ diaryEntry.getTextTags() }}
-            </div>
+            {%  include ":tag:collection_in_entry.html.twig" %}
+
 
     {% if maxPages > 1 %}
         <ul class="pagination pagination-sm">

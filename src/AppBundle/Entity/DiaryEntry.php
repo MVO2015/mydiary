@@ -154,6 +154,35 @@ class DiaryEntry
     }
 
     /**
+     * Get tag by Id
+     * @param $id Tag id
+     * @return int|string|bool Tag key
+     */
+    public function getTagKeyById($id)
+    {
+        $tags = $this->tags;
+        foreach ($tags as $key => $tag) {
+            if ($tag->getId() == $id) {
+                return $key;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Remove tag from the diary entry
+     * @param $id
+     */
+    public function removeTag($id)
+    {
+        $key = $this->getTagKeyById($id);
+        var_dump($key);
+        if ($key !== false) {
+            unset($this->tags[$key]);
+        }
+    }
+
+    /**
      * Shorten text to specified maximum and append "...".
      *
      * @param int $length Maximum length without "..."
@@ -200,7 +229,6 @@ class DiaryEntry
 
     /**
      * Get headline of an article as first sentence or shorten first sentence
-     * @param $content
      * @return string
      */
     public function getTitle()

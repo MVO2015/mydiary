@@ -1,0 +1,16 @@
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Text</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for tag in tags %}
+        <tr onclick="window.location.href='{{ path('tag_edit', {'id': tag.id}) }}'">
+            <td>{{ tag.id }}</td>
+            <td>{{ tag.text }} <a href={{ path('tag_delete', {'id': tag.id}) }}>×</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

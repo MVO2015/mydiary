@@ -1,0 +1,7 @@
+<div>
+{% for tag in tags %}
+    <span class="tag_element">
+                <span>{{ tag.text }} <a href={{ path('delete_tag', {'diaryEntryId': diaryEntry.id, 'tagId': tag.id}) }}>×</a></span>
+            </span>
+{% endfor %}
+</div>
