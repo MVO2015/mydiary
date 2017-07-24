@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\DiaryEntry;
+use AppBundle\Entity\Tag;
 use AppBundle\Form\BaseDiaryEntryType;
 use DateTime;
 use DateTimeZone;
@@ -41,10 +42,7 @@ class DiaryController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
-        $tag_choices = [];
-        foreach ($tags as $tag) {
-            $tag_choices[$tag->getText()]= $tag->getId();
-        }
+        $tag_choices = $em->getRepository('AppBundle:Tag')->findAllAsChoiceArray();
         $entry = new DiaryEntry(new DateTime("now", new DateTimeZone("Europe/Prague")), "", "");
         $form = $this->createForm(BaseDiaryEntryType::class, $entry, ['tag_choices' => $tag_choices]);
         // buttons
@@ -88,7 +86,7 @@ class DiaryController extends Controller
         $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntry $diaryEntry */
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-        $tagChoices = $diaryEntry->getTempTags();
+        $tagChoices = $em->getRepository('AppBundle:Tag')->findAllAsChoiceArray();
         $debug = print_r($tagChoices, true);
         $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry, ['tag_choices' => $tagChoices]);
 
@@ -116,7 +114,7 @@ class DiaryController extends Controller
             return $this->redirectToRoute("index");
         }
         if ($diaryEntry) {
-            return $this->render('diary/form.html.twig', array(
+            return $this->render('diary/edit.html.twig', array(
                 'form' => $form->createView(),
                 'id' => $diaryEntry->getId(), // for Delete button
                 // for Modal - delete confirmation

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Tag;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -15,5 +16,16 @@ class TagRepository extends EntityRepository
     public function findAllOrderBy($orderBy='text', $sort='asc')
     {
         return $this->findBy(array(), array($orderBy => $sort));
+    }
+
+    public function findAllAsChoiceArray()
+    {
+        $tags = $this->findBy(array(), array("id" => 'asc'));
+        $tagChoices = [];
+        /** @var Tag $tag */
+        foreach ($tags as $tag) {
+            $tagChoices[$tag->getText()]= $tag->getId();
+        }
+        return $tagChoices;
     }
 }
