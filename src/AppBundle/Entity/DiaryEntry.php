@@ -38,7 +38,7 @@ class DiaryEntry
      * @ORM\ManyToMany(targetEntity="Tag", inversedBy="diaryEntries")
      * @ORM\JoinTable(name="diaryEntries_tags")
      */
-    private $tags;
+    public $tags;
 
     /**
      * DiaryEntry constructor.

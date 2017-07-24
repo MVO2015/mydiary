@@ -6,13 +6,11 @@
 
 {% block form_buttons %}
 
-    {{ form_widget(form.update) }}
-
-    <!-- Trigger the modal with a button -->
-    <button type="button" class="btn btn-danger btn-lg" data-href="{{ path('delete', {'id': id }) }}"
-            data-toggle="modal" data-target="#confirm-delete">Delete
-    </button>
-    {% include("diary/cancel.html.twig") %}
+    {#<button type="submit" id="base_diary_entry_update" name="base_diary_entry[update]" class="diarybtn">Update</button>#}
+    {#<!-- Trigger the modal with a button -->#}
+    {#<button type="button" class="diarybtn" data-href="{{ path('delete', {'id': id }) }}"#}
+            {#data-toggle="modal" data-target="#confirm-delete">Delete</button>#}
+    {#{% include("diary/cancel.html.twig") %}#}
 
     <!-- Modal -->
     <div id="confirm-delete" class="modal fade" role="dialog">
@@ -28,8 +26,8 @@
                     <p>{{ shortNote }}</p>
                 </div>
                 <div class="modal-footer">
-                    <a type="button" class="btn btn-danger btn-ok">Delete</a>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Oh, no!</button>
+                    <a type="button" class="diarybtn">Delete</a>
+                    <button type="button" class="diarybtn btn-default" data-dismiss="modal">Oh, no!</button>
                 </div>
             </div>
         </div>

@@ -15,7 +15,7 @@
         <tbody>
         {% set computedOffset = (thisPage - 1) * limit %}
         {% for diaryEntry in diaryEntries %}
-            <tr onclick="window.location.href='{{ path('show_by_offset', {offset: computedOffset}) }}';">
+            <tr onclick="window.location.href='{{ path('edit', {id: diaryEntry.id}) }}';">
                 <td>{{ diaryEntry.datetime | date("Y-m-d h:i") }}</td>
                 <td>{{ diaryEntry.getTitle() }}</td>
             </tr>

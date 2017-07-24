@@ -90,16 +90,6 @@ class DiaryController extends Controller
         $debug = print_r($tagChoices, true);
         $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry, ['tag_choices' => $tagChoices]);
 
-        // buttons
-        $form->add(
-            'update',
-            SubmitType::class,
-            [
-                'attr' => [
-                    'class' => "btn btn-lg btn-success"
-                ]
-            ]);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -110,6 +100,9 @@ class DiaryController extends Controller
                     'success',
                     'Your entry "' . $diaryEntry->getNote() . '" has been updated!'
                 );
+            }
+            if ($form->get('delete')->isClicked()) {
+                return $this->redirectToRoute("delete", ['id' =>$diaryEntry->getId()]);
             }
             return $this->redirectToRoute("index");
         }
