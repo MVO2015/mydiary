@@ -107,7 +107,7 @@ class TagController extends Controller
     {
         if($this->deleteTag($id))
         {
-            return $this->redirectToRoute("tag_collection");
+            return $this->redirectToRoute("tag_new");
         };
     }
 
@@ -174,11 +174,12 @@ class TagController extends Controller
             if ($form->get('add')->isClicked()) {
 
                 /** @var Tag $tagFromForm */
-                $tagFromForm = new Tag();
-                $tagFromForm->setText($form->getData()['text']);
-                $em->persist($tagFromForm);
-                $em->flush();
-                $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy);
+                $tagFromForm =$form->getData();
+                if (!$em->getRepository("AppBundle:Tag")->findOneByText($tagFromForm->getText())) {
+                    $em->persist($tagFromForm);
+                    $em->flush();
+                    $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy);
+                }
             }
         }
 

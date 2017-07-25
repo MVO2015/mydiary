@@ -15,6 +15,16 @@
                 {{ diaryEntry.note }}
             </p>
             {%  include ":tag:collection_in_entry.html.twig" %}
+            <div>
+                {{ form_start(form) }}
+
+                {{ form_widget(form.text) }}
+                {% block buttons %}
+                    {{ form_widget(form.add) }}
+                {% endblock %}
+
+                {{ form_end(form) }}
+            </div>
 
 
     {% if maxPages > 1 %}

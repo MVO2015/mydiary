@@ -24,13 +24,14 @@ class DiaryEntryRepository extends EntityRepository
      * Get all entries
      * @param int $currentPage Current page number
      * @param int $limit Maximal number of records on one page
+     * @param string $order Sort order
      * @return Paginator
      */
-    public function getAllEntries($currentPage = 1, $limit)
+    public function getAllEntries($currentPage = 1, $limit, $order="ASC")
     {
         // Create our query
         $query = $this->createQueryBuilder('diary_entry')
-        ->orderBy('diary_entry.dateTime', 'ASC')
+        ->orderBy('diary_entry.dateTime', $order)
         ->getQuery();
 
         // No need to manually get get the result ($query->getResult())

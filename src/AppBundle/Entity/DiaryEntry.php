@@ -35,7 +35,7 @@ class DiaryEntry
 
     /**
      * @var Tag[]
-     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="diaryEntries")
+     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="diaryEntries", cascade={"persist"})
      * @ORM\JoinTable(name="diaryEntries_tags")
      */
     public $tags;
@@ -244,5 +244,14 @@ class DiaryEntry
     public function getShort()
     {
         return $this->shorten($this->getNote());
+    }
+
+    /**
+     * Add tag
+     * @param Tag $tag
+     */
+    public function addTag($tag)
+    {
+        $this->tags->add($tag);
     }
 }

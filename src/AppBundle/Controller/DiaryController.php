@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\DiaryEntry;
 use AppBundle\Entity\Tag;
 use AppBundle\Form\BaseDiaryEntryType;
+use AppBundle\Form\TagType;
 use DateTime;
 use DateTimeZone;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -89,6 +90,14 @@ class DiaryController extends Controller
         $tagChoices = $em->getRepository('AppBundle:Tag')->findAllAsChoiceArray();
         $debug = print_r($tagChoices, true);
         $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry, ['tag_choices' => $tagChoices]);
+        $form->add(
+            'update',
+            SubmitType::class,
+            [
+                'attr' => [
+                    'class' => "diarybtn"
+                ]
+            ]);
 
         $form->handleRequest($request);
 
@@ -100,9 +109,6 @@ class DiaryController extends Controller
                     'success',
                     'Your entry "' . $diaryEntry->getNote() . '" has been updated!'
                 );
-            }
-            if ($form->get('delete')->isClicked()) {
-                return $this->redirectToRoute("delete", ['id' =>$diaryEntry->getId()]);
             }
             return $this->redirectToRoute("index");
         }
@@ -148,7 +154,7 @@ class DiaryController extends Controller
         $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntryRepository $repository */
         $repository = $em->getRepository("AppBundle:DiaryEntry");
-        $diaryEntries = $repository->getAllEntries($page, $limit);
+        $diaryEntries = $repository->getAllEntries($page, $limit, "DESC");
 
         // You can also call the count methods (check PHPDoc for `paginate()`)
         // $totalEntriesReturned = $diaryEntries->getIterator()->count();
@@ -183,16 +189,17 @@ class DiaryController extends Controller
     /**
      * Controller Index action with paginator
      * @Route("/paginate/{page}", name="paginate")
+     * @param Request $request
      * @param integer $page The current page passed via URL
      * @return Response
      */
-    public function paginateAction($page = 1)
+    public function paginateAction(Request $request, $page = 1)
     {
         $limit = 1;
         $em = $this->getDoctrine()->getManager();
-        /** @var DiaryEntryRepository $repository */
-        $repository = $em->getRepository("AppBundle:DiaryEntry");
-        $diaryEntries = $repository->getAllEntries($page, $limit);
+        /** @var DiaryEntryRepository $diaryEntryRepository */
+        $diaryEntryRepository = $em->getRepository("AppBundle:DiaryEntry");
+        $diaryEntries = $diaryEntryRepository->getAllEntries($page, $limit);
 
         // You can also call the count methods (check PHPDoc for `paginate()`)
 //        $totalEntriesReturned = $diaryEntries->getIterator()->count();
@@ -202,15 +209,50 @@ class DiaryController extends Controller
 
         # ArrayIterator
         $iterator = $diaryEntries->getIterator();
+        /** @var DiaryEntry $diaryEntry */
+        $id = $iterator[0]->getId();
+        $diaryEntry = $diaryEntryRepository->find($id);
 
         $maxPages = ceil($totalEntries / $limit);
         $thisPage = $page;
+
+        $form = $this->createForm(TagType::class);
+        // buttons
+        $form->add(
+            'add',
+            SubmitType::class,
+            [
+                'attr' => [
+                    'class' => "diarybtn"
+                ]
+            ]);
+
+        $form->handleRequest($request);
+        // submit form
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('add')->isClicked()) {
+
+                /** @var Tag $tagFromForm */
+                $tagFromForm = $form->getData();
+                $tagFromRepo = $em->getRepository("AppBundle:Tag")->findOneByText($tagFromForm->getText());
+                if (!$tagFromRepo) {
+                    $diaryEntry->addTag($tagFromForm);
+                    $em->persist($tagFromForm);
+                    $em->flush();
+                } else {
+                    $diaryEntry->addTag($tagFromRepo);
+                    $em->flush();
+                }
+            }
+        }
+
         // Pass through the 3 above variables to calculate pages in twig
         return $this->render('diary/pagination.html.twig',
-            ['diaryEntry' => $iterator[0],
+            ['diaryEntry' => $diaryEntry,
                 'maxPages' => $maxPages,
                 'thisPage' => $thisPage,
-                'tags' => $iterator[0]->getTags()
+                'tags' => $diaryEntry->getTags(),
+                'form' => $form->createView(),
             ]);
     }
 

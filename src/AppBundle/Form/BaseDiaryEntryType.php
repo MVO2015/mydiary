@@ -2,11 +2,8 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\ChoiceLoader;
 use AppBundle\Entity\DiaryEntry;
-use AppBundle\Form\DataTransformer\TagToTextTransformer;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -33,13 +30,8 @@ class BaseDiaryEntryType extends AbstractType
             ]
         )
         ->add('note', TextareaType::class,
-            ['label' => "Note: "])
-        ->add('delete', SubmitType::class,
-            ['attr' => ['class' => "diarybtn"])
-        ->add('update', SubmitType::class,
-            ['attr' => ['class' => "diarybtn"]])
-        ->add('cancel', SubmitType::class,
-            ['attr' => ['class' => "diarybtn"]]);
+            ['label' => "Note: "]);
+
 //        ->add('tempTags', ChoiceType::class,  [
 //            'multiple' => true,
 //            'required' => false,
