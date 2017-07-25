@@ -8,8 +8,12 @@ use AppBundle\Form\BaseDiaryEntryType;
 use AppBundle\Form\TagType;
 use DateTime;
 use DateTimeZone;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -88,8 +92,8 @@ class DiaryController extends Controller
         /** @var DiaryEntry $diaryEntry */
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
         $tagChoices = $em->getRepository('AppBundle:Tag')->findAllAsChoiceArray();
-        $debug = print_r($tagChoices, true);
         $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry, ['tag_choices' => $tagChoices]);
+
         $form->add(
             'update',
             SubmitType::class,
@@ -103,14 +107,15 @@ class DiaryController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('update')->isClicked()) {
-                $diaryEntry = $form->getData();
+                $diaryEntry->setNote($form->getData()->getNote());
                 $em->flush();
-                $this->addFlash(
-                    'success',
-                    'Your entry "' . $diaryEntry->getNote() . '" has been updated!'
-                );
+//                $this->addFlash(
+//                    'success',
+//                    'Your entry "' . $diaryEntry->getTitle() . '" has been updated!'
+//                );
             }
-            return $this->redirectToRoute("index");
+            $id = $diaryEntry->getId();
+            return $this->redirectToRoute("paginate/$id");
         }
         if ($diaryEntry) {
             return $this->render('diary/edit.html.twig', array(
@@ -118,7 +123,7 @@ class DiaryController extends Controller
                 'id' => $diaryEntry->getId(), // for Delete button
                 // for Modal - delete confirmation
                 'shortNote' => $diaryEntry->getShort(),
-                'debug' => $debug
+                'tags' => $diaryEntry->getTags(),
             ));
         }
         return $this->redirectToRoute("index");
@@ -240,8 +245,12 @@ class DiaryController extends Controller
                     $em->persist($tagFromForm);
                     $em->flush();
                 } else {
-                    $diaryEntry->addTag($tagFromRepo);
-                    $em->flush();
+                    try {
+                        $diaryEntry->addTag($tagFromRepo);
+                        $em->flush();
+                    } catch (UniqueConstraintViolationException $e) {
+                        // prevent error when entering existing tag
+                    }
                 }
             }
         }
