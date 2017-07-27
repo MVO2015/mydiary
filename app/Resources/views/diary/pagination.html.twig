@@ -14,18 +14,7 @@
             <p class="note">
                 {{ diaryEntry.note }}
             </p>
-            {%  include ":tag:collection_in_entry.html.twig" %}
-            <div>
-                {{ form_start(form) }}
-
-                {{ form_widget(form.text) }}
-                {% block buttons %}
-                    {{ form_widget(form.add) }}
-                {% endblock %}
-
-                {{ form_end(form) }}
-            </div>
-
+            {%  include ":tag:collection_read.html.twig" %}
 
     {% if maxPages > 1 %}
         <ul class="pagination pagination-sm">

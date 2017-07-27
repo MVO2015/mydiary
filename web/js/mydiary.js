@@ -4,7 +4,7 @@ $(document).ready(function () {
         $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
     });
 
-    $("#base_diary_entry_tempTags").select2({
+    $(".select2").select2({
         tags:true
     });
     /*

@@ -29,6 +29,7 @@ class DiaryEntry
      */
     private $note;
     /**
+     * @var string
      * @ORM\Column(type="string")
      */
     private $category;
@@ -127,30 +128,71 @@ class DiaryEntry
     }
 
     /**
-     * Get tags, delimited with comma
+     * Get tags as string, delimited with comma
+     * If there is no tag, return "".
      *
      * @return string of tags, delimited with comma
      */
-    public function getTextTags()
+    public function getTagsAsString()
     {
-        $tagsArray = $this->getTags();
-        $textTags = [];
-        /** @var Tag $oneTag */
-        foreach ($tagsArray as $oneTag) {
-            $textTags[] = $oneTag->getText();
+        $tags = $this->getTags();
+        if ($tags) {
+            $tagsArray = [];
+            /** @var Tag $oneTag */
+            foreach ($tags as $oneTag) {
+                $tagsArray[] = $oneTag->getText();
+            }
+            return implode(", ", $tagsArray);
         }
-        return implode(", ", $textTags);
+        return "";
     }
 
-    public function getTempTags()
+    /**
+     * Get tags as array ['text'] => id
+     *
+     * @return array
+     */
+    public function getTagsAsArrayByText()
     {
-        $tagsArray = $this->getTags();
-        $tempTags = [];
+        $tags = $this->getTags();
+        $tagsArray = [];
         /** @var Tag $oneTag */
-        foreach ($tagsArray as $key => $oneTag) {
-            $tempTags[$oneTag->getText()] = $oneTag->getId();
+        foreach ($tags as $key => $oneTag) {
+            $tagsArray[$oneTag->getText()] = $oneTag->getId();
         }
-        return $tempTags;
+        return $tagsArray;
+    }
+
+    /**
+     * Get tags as array [id1, id2, id...]
+     *
+     * @return array
+     */
+    public function getTagsAsArrayOfIds()
+    {
+        $tags = $this->getTags();
+        $idsArray = [];
+        /** @var Tag $oneTag */
+        foreach ($tags as $oneTag) {
+            $idsArray[] = $oneTag->getId();
+        }
+        return $idsArray;
+    }
+
+    /**
+     * Get tags as array [id] => 'text'
+     *
+     * @return array
+     */
+    public function getTagsAsArrayById()
+    {
+        $tags = $this->getTags();
+        $tagsArray = [];
+        /** @var Tag $oneTag */
+        foreach ($tags as $oneTag) {
+            $tagsArray[$oneTag->getId()] = $oneTag->getText();
+        }
+        return $tagsArray;
     }
 
     /**
@@ -171,14 +213,16 @@ class DiaryEntry
 
     /**
      * Remove tag from the diary entry
-     * @param $id
+     * @param Tag $tag
      */
-    public function removeTag($id)
+    public function removeTag(Tag $tag)
     {
-        $key = $this->getTagKeyById($id);
-        var_dump($key);
-        if ($key !== false) {
-            unset($this->tags[$key]);
+        /** @var Tag $oneTag */
+        foreach ($this->tags as $key => $oneTag) {
+            if ($oneTag->getId() == $tag->getId()) {
+                unset($this->tags[$key]);
+                break;
+            }
         }
     }
 
@@ -253,5 +297,10 @@ class DiaryEntry
     public function addTag($tag)
     {
         $this->tags->add($tag);
+    }
+
+    public function getTagsCollection()
+    {
+        return $this->getTags();
     }
 }

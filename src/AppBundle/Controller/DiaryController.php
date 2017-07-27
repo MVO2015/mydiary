@@ -5,15 +5,20 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\DiaryEntry;
 use AppBundle\Entity\Tag;
 use AppBundle\Form\BaseDiaryEntryType;
+use AppBundle\Form\DataTransformer\TagToIdTransformer;
+use AppBundle\Form\DataTransformer\AddNewChoiceTransformer;
 use AppBundle\Form\TagType;
 use DateTime;
 use DateTimeZone;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\Types\ArrayType;
+use Doctrine\ORM\PersistentCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -91,8 +96,8 @@ class DiaryController extends Controller
         $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntry $diaryEntry */
         $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-        $tagChoices = $em->getRepository('AppBundle:Tag')->findAllAsChoiceArray();
-        $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry, ['tag_choices' => $tagChoices]);
+        $options = ['data_transformer' => new AddNewChoiceTransformer($em)];
+        $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry, $options);
 
         $form->add(
             'update',
@@ -107,23 +112,14 @@ class DiaryController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('update')->isClicked()) {
-                $diaryEntry->setNote($form->getData()->getNote());
                 $em->flush();
-//                $this->addFlash(
-//                    'success',
-//                    'Your entry "' . $diaryEntry->getTitle() . '" has been updated!'
-//                );
             }
-            $id = $diaryEntry->getId();
-            return $this->redirectToRoute("paginate/$id");
+            return $this->redirectToRoute("index");
         }
         if ($diaryEntry) {
             return $this->render('diary/edit.html.twig', array(
                 'form' => $form->createView(),
-                'id' => $diaryEntry->getId(), // for Delete button
-                // for Modal - delete confirmation
                 'shortNote' => $diaryEntry->getShort(),
-                'tags' => $diaryEntry->getTags(),
             ));
         }
         return $this->redirectToRoute("index");
@@ -175,7 +171,12 @@ class DiaryController extends Controller
         // Pass through the 3 above variables to calculate pages in twig
         return $this->render(
             'diary/index.html.twig',
-            ['diaryEntries' => $iterator, 'maxPages' => $maxPages, 'thisPage' => $thisPage, 'limit' => $limit]
+            [
+                'diaryEntries' => $iterator,
+                'maxPages' => $maxPages,
+                'thisPage' => $thisPage,
+                'limit' => $limit,
+            ]
         );
     }
 
@@ -221,47 +222,12 @@ class DiaryController extends Controller
         $maxPages = ceil($totalEntries / $limit);
         $thisPage = $page;
 
-        $form = $this->createForm(TagType::class);
-        // buttons
-        $form->add(
-            'add',
-            SubmitType::class,
-            [
-                'attr' => [
-                    'class' => "diarybtn"
-                ]
-            ]);
-
-        $form->handleRequest($request);
-        // submit form
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('add')->isClicked()) {
-
-                /** @var Tag $tagFromForm */
-                $tagFromForm = $form->getData();
-                $tagFromRepo = $em->getRepository("AppBundle:Tag")->findOneByText($tagFromForm->getText());
-                if (!$tagFromRepo) {
-                    $diaryEntry->addTag($tagFromForm);
-                    $em->persist($tagFromForm);
-                    $em->flush();
-                } else {
-                    try {
-                        $diaryEntry->addTag($tagFromRepo);
-                        $em->flush();
-                    } catch (UniqueConstraintViolationException $e) {
-                        // prevent error when entering existing tag
-                    }
-                }
-            }
-        }
-
         // Pass through the 3 above variables to calculate pages in twig
         return $this->render('diary/pagination.html.twig',
             ['diaryEntry' => $diaryEntry,
                 'maxPages' => $maxPages,
                 'thisPage' => $thisPage,
                 'tags' => $diaryEntry->getTags(),
-                'form' => $form->createView(),
             ]);
     }
 

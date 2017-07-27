@@ -3,25 +3,20 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\DiaryEntry;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BaseDiaryEntryType extends AbstractType
 {
-//    private $transformer;
-
-//    public function __construct(TagToTextTransformer $transformer)
-//    {
-//        $this->transformer = $transformer;
-//    }
+    private $transformer;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->transformer = $options['data_transformer'];
         $builder
         ->add('dateTime', DateTimeType::class, [
                 'label' => "Date and time: ",
@@ -30,27 +25,21 @@ class BaseDiaryEntryType extends AbstractType
             ]
         )
         ->add('note', TextareaType::class,
-            ['label' => "Note: "]);
-
-//        ->add('tempTags', ChoiceType::class,  [
-//            'multiple' => true,
-//            'required' => false,
-//            'attr' => ['class' => "form-control"],
-//            'choice_loader' => new ChoiceLoader($options['tag_choices']),
-//        ]);
-//        ->add('tags', CollectionType::class, array(
-//            'entry_type' => TagType::class,
-//            'allow_add' => true,
-//        ));
-//        $builder->get('tag')
-//            ->addModelTransformer($this->transformer);
+            ['label' => "Note: "])
+        ->add('tags', EntityType::class, [
+            'class' => 'AppBundle:Tag',
+            'multiple' => true,
+            'attr' => ['class'=>'select2 form-control']
+        ]);
+        $builder->get('tags')->addViewTransformer($this->transformer);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => DiaryEntry::class,
-            'tag_choices' => []
+            'data_transformer' => []
         ]);
     }
+
 }

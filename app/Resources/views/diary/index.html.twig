@@ -18,6 +18,8 @@
             <tr onclick="window.location.href='{{ path('edit', {id: diaryEntry.id}) }}';">
                 <td>{{ diaryEntry.datetime | date("Y-m-d h:i") }}</td>
                 <td>{{ diaryEntry.getTitle() }}</td>
+                {%  set tags = diaryEntry.getTags() %}
+                <td>{% include ':tag:collection_read.html.twig' %}</td>
             </tr>
             {% set computedOffset = computedOffset + 1 %}
         {% endfor %}
