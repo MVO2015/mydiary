@@ -44,63 +44,28 @@ class DiaryController extends Controller
     }
 
     /**
-     * @Route("/add", name="add")
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
-     */
-    public function addAction(Request $request)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $tags = $em->getRepository('AppBundle:Tag')->findAll();
-        $tag_choices = $em->getRepository('AppBundle:Tag')->findAllAsChoiceArray();
-        $entry = new DiaryEntry(new DateTime("now", new DateTimeZone("Europe/Prague")), "", "");
-        $form = $this->createForm(BaseDiaryEntryType::class, $entry, ['tag_choices' => $tag_choices]);
-        // buttons
-        $form->add(
-            'save',
-            SubmitType::class,
-            [
-                'attr' => [
-                    'class' => "btn btn-lg btn-success"
-                ]
-            ]);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('save')->isClicked()) {
-                $entry=$form->getData();
-                $em->persist($entry);
-                $em->flush();
-                $this->addFlash(
-                    'success',
-                    'Your entry "' . $entry->getNote() . '" has been saved!'
-                );
-            }
-            return $this->redirectToRoute("index");
-        }
-
-        return $this->render('diary/add.html.twig', array(
-            'form' => $form->createView()
-        ));
-    }
-
-    /**
+     * @Route("/add/", name="add")
      * @Route("/edit/{id}", name="edit")
      * @param Request $request
      * @param int $id Diary entry id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function editAction(Request $request, $id)
+    public function editAction(Request $request, $id=null)
     {
         $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntry $diaryEntry */
-        $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
+        if ($id) {
+            $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
+        } else {
+            $diaryEntry = new DiaryEntry(
+                new DateTime("now", new DateTimeZone("Europe/Prague")), "", ""
+            );
+        }
         $options = ['data_transformer' => new AddNewChoiceTransformer($em)];
         $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry, $options);
 
         $form->add(
-            'update',
+            'save',
             SubmitType::class,
             [
                 'attr' => [
@@ -111,7 +76,10 @@ class DiaryController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('update')->isClicked()) {
+            if ($form->get('save')->isClicked()) {
+                if (!$id) {
+                    $em->persist($diaryEntry);
+                }
                 $em->flush();
             }
             return $this->redirectToRoute("index");
@@ -194,18 +162,18 @@ class DiaryController extends Controller
 
     /**
      * Controller Index action with paginator
-     * @Route("/paginate/{page}", name="paginate")
+     * @Route("/paginate/{page}/{offset}", name="paginate")
      * @param Request $request
      * @param integer $page The current page passed via URL
      * @return Response
      */
-    public function paginateAction(Request $request, $page = 1)
+    public function paginateAction(Request $request, $page = 1, $offset=0)
     {
-        $limit = 1;
+        $limit = 10;
         $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntryRepository $diaryEntryRepository */
         $diaryEntryRepository = $em->getRepository("AppBundle:DiaryEntry");
-        $diaryEntries = $diaryEntryRepository->getAllEntries($page, $limit);
+        $diaryEntries = $diaryEntryRepository->getAllEntries($page, $limit, "DESC");
 
         // You can also call the count methods (check PHPDoc for `paginate()`)
 //        $totalEntriesReturned = $diaryEntries->getIterator()->count();
@@ -216,7 +184,7 @@ class DiaryController extends Controller
         # ArrayIterator
         $iterator = $diaryEntries->getIterator();
         /** @var DiaryEntry $diaryEntry */
-        $id = $iterator[0]->getId();
+        $id = $iterator[$offset]->getId();
         $diaryEntry = $diaryEntryRepository->find($id);
 
         $maxPages = ceil($totalEntries / $limit);
@@ -228,6 +196,8 @@ class DiaryController extends Controller
                 'maxPages' => $maxPages,
                 'thisPage' => $thisPage,
                 'tags' => $diaryEntry->getTags(),
+                'diaryEntries' => $diaryEntries,
+                'limit' => $limit,
             ]);
     }
 

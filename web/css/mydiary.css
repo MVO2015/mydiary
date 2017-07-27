@@ -1,15 +1,20 @@
 /*bootstrap table corrections, esp. for Chrome*/
 .table td:nth-child(1){
-    width:20%;
+    width: 100px;
 }
 
 .tag_element {
-    background-color: powderblue;
-    border: 2px solid darkblue;
+    color: white;
+    background-color: #85aab0;
+    border: 0px solid darkblue;
     border-radius: 4px;
     padding: 3px;
     margin: 3px;
     line-height: 225%;
+}
+
+.tag_element a {
+    color: white;
 }
 
 .note {
@@ -103,4 +108,13 @@
 
 .diarybtn:hover {
     background: greenyellow;
+}
+
+#leftnav {
+    width: 300px;
+    float:left;
+    margin: 2%;
+}
+#rightframe {
+    overflow: hidden; /* if you don't want #second to wrap below #first */
 }

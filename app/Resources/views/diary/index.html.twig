@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block header %}
-    My Diary
+    Notes
 {% endblock %}
 
 {% block body %}
-    <table class="table table-striped table-hover">
+    <table id="diaryindex" class="table table-striped table-hover">
         <thead>
         <tr>
             <th>Date and time</th>
@@ -13,19 +13,10 @@
         </tr>
         </thead>
         <tbody>
-        {% set computedOffset = (thisPage - 1) * limit %}
-        {% for diaryEntry in diaryEntries %}
-            <tr onclick="window.location.href='{{ path('edit', {id: diaryEntry.id}) }}';">
-                <td>{{ diaryEntry.datetime | date("Y-m-d h:i") }}</td>
-                <td>{{ diaryEntry.getTitle() }}</td>
-                {%  set tags = diaryEntry.getTags() %}
-                <td>{% include ':tag:collection_read.html.twig' %}</td>
-            </tr>
-            {% set computedOffset = computedOffset + 1 %}
-        {% endfor %}
+            {% include(':diary:index.tbody.html.twig') %}
         </tbody>
     </table>
 
-    {{ include('diary/index.paginator.html.twig') }}
+    {% include('diary/index.paginator.html.twig') %}
 
 {% endblock %}

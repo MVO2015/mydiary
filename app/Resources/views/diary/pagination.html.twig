@@ -5,6 +5,12 @@
 {% endblock %}
 
 {% block body %}
+    <div id="leftnav">
+        <table class="table table-striped table-hover">
+            {% include(':diary:index.notags.tbody.html.twig') %}
+        </table>
+    </div>
+    <div id="rightframe">
             <h2 class="timestamp">{{ diaryEntry.datetime | date("Y-m-d h:i") }}</h2>
 
             <div class="entryTitle">
@@ -14,27 +20,9 @@
             <p class="note">
                 {{ diaryEntry.note }}
             </p>
+            <div>
             {%  include ":tag:collection_read.html.twig" %}
-
-    {% if maxPages > 1 %}
-        <ul class="pagination pagination-sm">
-            {# `«` arrow  #}
-            <li {{ thisPage == 1 ? 'class="disabled"' }}>
-                <a href="{{ path('paginate', {page: thisPage-1 < 1 ? 1 : thisPage-1}) }}">«</a>
-            </li>
-
-            {# Render each page number #}
-            {% for i in 1..maxPages %}
-                <li {{ thisPage == i ? 'class="active"' }}>
-                    <a href="{{ path('paginate', {page: i}) }}">{{ i }}</a>
-                </li>
-            {% endfor %}
-
-            {# `»` arrow #}
-            <li {{ thisPage == maxPages ? 'class="disabled"' }}>
-                <a href="{{ path('paginate', {page: thisPage+1 <= maxPages ? thisPage+1 : thisPage}) }}">»</a>
-            </li>
-        </ul>
-    {% endif %}
+            </div>
+    </div>
 
 {% endblock %}

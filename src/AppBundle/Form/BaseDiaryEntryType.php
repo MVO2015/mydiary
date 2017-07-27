@@ -29,6 +29,7 @@ class BaseDiaryEntryType extends AbstractType
         ->add('tags', EntityType::class, [
             'class' => 'AppBundle:Tag',
             'multiple' => true,
+            'required' => false,
             'attr' => ['class'=>'select2 form-control']
         ]);
         $builder->get('tags')->addViewTransformer($this->transformer);
