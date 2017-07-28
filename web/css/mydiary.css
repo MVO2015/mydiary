@@ -1,6 +1,6 @@
 /*bootstrap table corrections, esp. for Chrome*/
 .table td:nth-child(1){
-    width: 100px;
+    /*width: 10%;*/
 }
 
 .tag_element {
@@ -111,10 +111,13 @@
 }
 
 #leftnav {
-    width: 300px;
+    width: 20%;
+    height: 650px;
     float:left;
     margin: 2%;
+    overflow: auto; /* scrollable content */
 }
 #rightframe {
+    margin: 2%;
     overflow: hidden; /* if you don't want #second to wrap below #first */
 }

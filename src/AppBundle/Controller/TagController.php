@@ -22,7 +22,7 @@ class TagController extends Controller
      * @Route(
      *     "/tag/index/{orderBy}/{sort}",
      *     name="tag_index",
-     *     defaults={"orderBy": "id", "sort": "asc"},
+     *     defaults={"orderBy": "text", "sort": "asc"},
      *     requirements={"orderBy": "id|text", "sort": "asc|desc"},
      *     )
      * @param Request $request
@@ -30,7 +30,7 @@ class TagController extends Controller
      * @param string $sort sorting parameter of database order by clause
      * @return Response
      */
-    public function indexAction(Request $request, $orderBy = "id", $sort = "asc")
+    public function indexAction(Request $request, $orderBy = "text", $sort = "asc")
     {
         $em = $this->getDoctrine()->getManager();
         $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy, $sort);
@@ -189,5 +189,22 @@ class TagController extends Controller
                 "form" => $form->createView(),
                 "tags" => $tags
             ]);
+    }
+
+    /**
+     * @Route("/collapse", name="collapse")
+     * @param Request $request
+     * @return Response
+     */
+    public function collapseAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy("text", "ASC");
+        return $this->render(
+            ":tag:collapse_diary.html.twig",
+            [
+                'tags' => $tags
+            ]
+        );
     }
 }

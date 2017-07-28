@@ -20,8 +20,6 @@ class Builder implements ContainerAwareInterface
             ]
         );
 
-        $menu->addChild('＋', array('route' => 'add'));
-
         // access services from the container!
 //           $em = $this->container->get('doctrine')->getManager();
         // findMostRecent and Blog are just imaginary examples
@@ -32,16 +30,16 @@ class Builder implements ContainerAwareInterface
 //               'routeParameters'))) => array('id' => $blog->getId())
 //           ));
 
+        $menu->addChild('Notes', array('route' => 'paginate'));
         $menu->addChild('Index', array('route' => 'index'));
-        $menu->addChild('Pages', array('route' => 'paginate'));
         $menu->addChild('Tags')->setAttribute('dropdown',true)
             ->setUri('#')
             ->setLinkAttributes(['data-toggle' => 'dropdown', 'class' => 'dropdown-toggle'])
             ->setChildrenAttribute('class', 'dropdown-menu')
             ->addChild('Index', ['route' => 'tag_index'])->getParent()
-            ->addChild('Add', ['route' => 'tag_new']);
-
-        // ... add more children
+            ->addChild('Add', ['route' => 'tag_new'])->getParent()
+            ->addChild('Expand/Collapse', ['route' => 'collapse']);
+        $menu->addChild('＋', array('route' => 'add'));
 
         return $menu;
     }

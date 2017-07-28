@@ -1,10 +1,16 @@
 {#{% set computedOffset = (thisPage - 1) * limit %}#}
         {% for diaryEntry in diaryEntries %}
             <tr onclick="window.location.href='{{ path('edit', {id: diaryEntry.id}) }}';">
-                <td><div style="width: 100px;">{{ diaryEntry.datetime | date("Y-m-d") }}</div></td>
+                <td>
+                    <div style="width: 100px;">{{ diaryEntry.datetime | date("Y-m-d") }}</div>
+                </td>
                 <td>{{ diaryEntry.getTitle() }}
                     {%  set tags = diaryEntry.getTags() %}
-                    {% include ':tag:collection_read.html.twig' %}</td>
+                    {% include ':tag:collection_read.html.twig' %}
+                </td>
+                <td>
+                    <a href="{{ path('delete', {id: diaryEntry.id}) }}">&#x1F5D1;</a>
+                </td>
             </tr>
             {#{% set computedOffset = computedOffset + 1 %}#}
         {% endfor %}

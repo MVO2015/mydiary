@@ -1,8 +1,8 @@
 {% set computedOffset = 0 %}
 {% for diaryEntry in diaryEntries %}
     <tr onclick="window.location.href='{{ path('paginate', {page: thisPage, offset: computedOffset}) }}';">
-        <td><div style="width: 100px;">{{ diaryEntry.datetime | date("Y-m-d") }}</div></td>
-        <td>{{ diaryEntry.getTitle() }}
+        <td><span style="width: 100px; font-weight: bold; margin-right: 1em;">{{ diaryEntry.datetime | date("d.m.Y") }}</span>
+        {{ diaryEntry.getTitle() }}</td>
     </tr>
     {% set computedOffset = computedOffset + 1 %}
 {% endfor %}

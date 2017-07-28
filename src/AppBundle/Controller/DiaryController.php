@@ -169,7 +169,7 @@ class DiaryController extends Controller
      */
     public function paginateAction(Request $request, $page = 1, $offset=0)
     {
-        $limit = 10;
+        $limit = 999999;
         $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntryRepository $diaryEntryRepository */
         $diaryEntryRepository = $em->getRepository("AppBundle:DiaryEntry");
@@ -197,7 +197,6 @@ class DiaryController extends Controller
                 'thisPage' => $thisPage,
                 'tags' => $diaryEntry->getTags(),
                 'diaryEntries' => $diaryEntries,
-                'limit' => $limit,
             ]);
     }
 
