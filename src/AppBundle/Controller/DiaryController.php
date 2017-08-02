@@ -38,9 +38,9 @@ class DiaryController extends Controller
     public function homeAction(Request $request)
     {
         $this->get("app.logic")->init($request);
-        return $this->render(
-            'diary/home.html.twig'
-        );
+        $em = $this->getDoctrine()->getManager();
+        $tags = $em->getRepository("AppBundle:Tag")->findAll();
+        return $this->render(":diary:home.html.twig", ['tags' => $tags]);
     }
 
     /**

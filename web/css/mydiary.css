@@ -121,3 +121,45 @@
     margin: 2%;
     overflow: hidden; /* if you don't want #second to wrap below #first */
 }
+
+/* Rendering and animation of tags on home page */
+.tag_anim_h {
+    position: relative;
+    animation-name: moveit_h;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-direction: alternate;
+}
+
+@keyframes moveit_h {
+    from {left: 0}
+    to {left: 70%}
+}
+
+.tag_anim_v {
+    position: relative;
+    animation-name: moveit_v;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-direction: alternate;
+}
+
+@keyframes moveit_v {
+    from {top: 0}
+    to {top: 70%}
+}
+
+.tag_home {
+    opacity: 0.5;
+    text-align: center;
+}
+
+.tag_container {
+    position: absolute;
+    width: 5%;
+    height: 5%;
+}
+
+/* ----------------------------- */

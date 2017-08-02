@@ -6,4 +6,37 @@
     <div>
         <p>Write down your sport activities, hobbies, studying or whatever you want.</p>
     </div>
+    <div
+        style="
+            position: relative;
+            height:70vh;
+            width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            /*background-color: #EEE;*/
+        "
+    >
+    {% for tag in tags %}
+        <div
+                class="tag_container"
+                style="
+                        top:{{ random(70) }}%;
+                        left:{{ random(90) }}%;
+                        font-size: {{ tag.diaryEntries|length  }}em;
+                        color:#{{ random(9) }}{{ random(9) }}{{ random(9) }};
+                        "
+        >
+            <div class="tag_anim_v" style="animation-delay: -{{ (random(100)/20) | round(1, 'floor') }}s">
+                <div id="tag_{{ tag.getId() }}"
+                      class="tag_anim_h tag_home"
+                      style="
+                              animation-delay: -{{ (random(100)/20) | round(1, 'floor') }}s;
+                              "
+                >
+                    {{ tag.getText() }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
 {% endblock %}

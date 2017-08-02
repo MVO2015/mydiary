@@ -82,6 +82,11 @@ class Tag
         return $this->diaryEntries;
     }
 
+    public function getDiaryEntriesCount()
+    {
+        return count($this->diaryEntries);
+    }
+
     public function __toString()
     {
         return $this->getText();
