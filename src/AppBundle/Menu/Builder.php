@@ -32,24 +32,30 @@ class Builder implements ContainerAwareInterface
 //               'routeParameters'))) => array('id' => $blog->getId())
 //           ));
 
-        $menu->addChild('Notes', ['route' => 'paginate']);
-        $menu->addChild('Index', ['route' => 'index']);
-        $menu->addChild('Tags')->setAttribute('dropdown',true)
+        $menu->addChild('Notes', ['route' => 'paginate'])->setAttribute('class', 'nav-item')->setLinkAttributes(['class' => 'nav-link']);
+        $menu->addChild('Index', ['route' => 'index'])->setAttribute('class', 'nav-item')->setLinkAttributes(['class' => 'nav-link']);
+        $menu->addChild('Tags')->setAttributes(['class' => 'nav-item dropdown'])
             ->setUri('#')
-            ->setLinkAttributes(['data-toggle' => 'dropdown', 'class' => 'dropdown-toggle'])
+            ->setLinkAttributes([
+                'data-toggle' => 'dropdown',
+                'class' => 'dropdown-toggle nav-link',
+                'aria-haspopup' => 'true',
+                'aria-expanded' => 'false',
+                'id'=>'navbarDropdownMenuLink'
+            ])
             ->setChildrenAttribute('class', 'dropdown-menu')
-            ->addChild('Index', ['route' => 'tag_index']);
-        $menu->addChild('Add', ['route' => 'tag_new']);
-        $menu->addChild('Expand/Collapse', ['route' => 'collapse']);
-        $menu->addChild('＋', ['route' => 'add']);
+            ->addChild('Index', ['route' => 'tag_index'])->setAttributes(['class' => 'dropdown-menu', 'aria-labelledby' => 'navbarDropdownMenuLink'])->setLinkAttributes(['class' => 'dropdown-item']);;
+        $menu->addChild('Add', ['route' => 'tag_new'])->setAttribute('class', 'nav-item')->setLinkAttributes(['class' => 'nav-link']);
+        $menu->addChild('Expand/Collapse', ['route' => 'collapse'])->setAttribute('class', 'nav-item')->setLinkAttributes(['class' => 'nav-link']);
+        $menu->addChild('＋', ['route' => 'add'])->setAttribute('class', 'nav-item')->setLinkAttributes(['class' => 'nav-link']);
 
         /** @var User $user */
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
         if (is_a($user, User::class)) {
-            $menu->addChild($user->getUsername(), ['route' => 'fos_user_profile_show']);
+            $menu->addChild($user->getUsername(), ['route' => 'fos_user_profile_show'])->setAttribute('class', 'nav-item')->setLinkAttributes(['class' => 'nav-link']);
         } else {
             $menu->addChild("Login", ['route' => 'fos_user_security_login'])
-                ->setAttributes(['class' => 'pull-xs-right']);
+                ->setAttributes(['class' => 'nav-item pull-xs-right'])->setLinkAttributes(['class' => 'nav-link']);
         }
 
         return $menu;
