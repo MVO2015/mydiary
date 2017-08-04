@@ -160,6 +160,7 @@
     position: absolute;
     width: 5%;
     height: 5%;
+    white-space: nowrap;
 }
 
 /* ----------------------------- */

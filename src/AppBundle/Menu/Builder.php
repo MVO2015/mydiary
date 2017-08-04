@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Menu;
 
+use AppBundle\Entity\User;
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -11,6 +12,7 @@ class Builder implements ContainerAwareInterface
 
     public function mainMenu(FactoryInterface $factory, array $options)
     {
+
         $menu = $factory->createItem(
             'root',
             [
@@ -30,16 +32,25 @@ class Builder implements ContainerAwareInterface
 //               'routeParameters'))) => array('id' => $blog->getId())
 //           ));
 
-        $menu->addChild('Notes', array('route' => 'paginate'));
-        $menu->addChild('Index', array('route' => 'index'));
+        $menu->addChild('Notes', ['route' => 'paginate']);
+        $menu->addChild('Index', ['route' => 'index']);
         $menu->addChild('Tags')->setAttribute('dropdown',true)
             ->setUri('#')
             ->setLinkAttributes(['data-toggle' => 'dropdown', 'class' => 'dropdown-toggle'])
             ->setChildrenAttribute('class', 'dropdown-menu')
-            ->addChild('Index', ['route' => 'tag_index'])->getParent()
-            ->addChild('Add', ['route' => 'tag_new'])->getParent()
-            ->addChild('Expand/Collapse', ['route' => 'collapse']);
-        $menu->addChild('＋', array('route' => 'add'));
+            ->addChild('Index', ['route' => 'tag_index']);
+        $menu->addChild('Add', ['route' => 'tag_new']);
+        $menu->addChild('Expand/Collapse', ['route' => 'collapse']);
+        $menu->addChild('＋', ['route' => 'add']);
+
+        /** @var User $user */
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        if (is_a($user, User::class)) {
+            $menu->addChild($user->getUsername(), ['route' => 'fos_user_profile_show']);
+        } else {
+            $menu->addChild("Login", ['route' => 'fos_user_security_login'])
+                ->setAttributes(['class' => 'pull-xs-right']);
+        }
 
         return $menu;
     }
