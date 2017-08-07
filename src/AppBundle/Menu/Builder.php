@@ -13,14 +13,7 @@ class Builder implements ContainerAwareInterface
     public function mainMenu(FactoryInterface $factory, array $options)
     {
 
-        $menu = $factory->createItem(
-            'root',
-            [
-                'childrenAttributes' => [
-                    'class' => 'nav navbar-nav',
-                ],
-            ]
-        );
+        $menu = $factory->createItem('root', ['childrenAttributes' => ['class' => 'nav navbar-nav']]);
 
         // access services from the container!
 //           $em = $this->container->get('doctrine')->getManager();
@@ -43,15 +36,22 @@ class Builder implements ContainerAwareInterface
         $menu->addChild('Expand/Collapse', ['route' => 'collapse']);
         $menu->addChild('＋', ['route' => 'add']);
 
+        return $menu;
+    }
+
+    public function rightMenu(FactoryInterface $factory, array $options)
+    {
+        $rMenu = $factory->createItem('root', ['childrenAttributes' => ['class' => 'nav navbar-nav navbar-right']]);
+
         /** @var User $user */
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
         if (is_a($user, User::class)) {
-            $menu->addChild($user->getUsername(), ['route' => 'fos_user_profile_show']);
+            $rMenu->addChild($user->getUsername(), ['route' => 'fos_user_profile_show']);
         } else {
-            $menu->addChild("Login", ['route' => 'fos_user_security_login'])
-                ->setAttributes(['class' => 'pull-xs-right']);
+            $rMenu->addChild("Login", ['route' => 'fos_user_security_login']);
         }
 
-        return $menu;
+        return $rMenu;
     }
+
 }
