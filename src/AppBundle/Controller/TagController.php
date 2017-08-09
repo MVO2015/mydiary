@@ -32,8 +32,13 @@ class TagController extends Controller
      */
     public function indexAction(Request $request, $orderBy = "text", $sort = "asc")
     {
-        $em = $this->getDoctrine()->getManager();
-        $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy, $sort);
+        $tags = [];
+        $user = $this->getUser();
+        if ($user) {
+            $userId = $user->getId();
+            $em = $this->getDoctrine()->getManager();
+            $tags = $em->getRepository("AppBundle:Tag")->findAllByUserOrderBy($userId, $orderBy, $sort);
+        }
         return $this->render("tag/index.html.twig", ['tags' => $tags]);
     }
 
@@ -79,8 +84,6 @@ class TagController extends Controller
                 'id' => $tag->getId(), // for Delete button
             ));
         }
-
-        echo "Hm, we are here...";
     }
 
     /**
@@ -155,40 +158,45 @@ class TagController extends Controller
     public function addAction(Request $request)
     {
         $orderBy = "text";
-        $em = $this->getDoctrine()->getManager();
-        $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy);
-        $form = $this->createForm(TagType::class);
-        // buttons
-        $form->add(
-            'add',
-            SubmitType::class,
-            [
-                'attr' => [
-                    'class' => "diarybtn"
-                ]
-            ]);
+        $user = $this->getUser();
+        if ($user) {
+            $userId = $user->getId();
+            $em = $this->getDoctrine()->getManager();
+            $tags = $em->getRepository("AppBundle:Tag")->findAllByUserOrderBy($userId, $orderBy);
+            $form = $this->createForm(TagType::class);
+            // buttons
+            $form->add(
+                'add',
+                SubmitType::class,
+                [
+                    'attr' => [
+                        'class' => "diarybtn"
+                    ]
+                ]);
 
-        $form->handleRequest($request);
-        // submit form
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('add')->isClicked()) {
+            $form->handleRequest($request);
+            // submit form
+            if ($form->isSubmitted() && $form->isValid()) {
+                if ($form->get('add')->isClicked()) {
 
-                /** @var Tag $tagFromForm */
-                $tagFromForm =$form->getData();
-                if (!$em->getRepository("AppBundle:Tag")->findOneByText($tagFromForm->getText())) {
-                    $em->persist($tagFromForm);
-                    $em->flush();
-                    $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy);
+                    /** @var Tag $tagFromForm */
+                    $tagFromForm =$form->getData();
+                    if (!$em->getRepository("AppBundle:Tag")->findOneByUserAndText($userId, $tagFromForm->getText())) {
+                        $em->persist($tagFromForm);
+                        $em->flush();
+                        $tags = $em->getRepository("AppBundle:Tag")->findAllByUserOrderBy($userId, $orderBy);
+                    }
                 }
             }
-        }
 
-        return $this->render(
-            ":tag:add.form.html.twig",
-            [
-                "form" => $form->createView(),
-                "tags" => $tags
-            ]);
+            return $this->render(
+                ":tag:add.form.html.twig",
+                [
+                    "form" => $form->createView(),
+                    "tags" => $tags
+                ]);
+        }
+        return $this->redirectToRoute('fos_user_security_login');
     }
 
     /**
@@ -198,13 +206,19 @@ class TagController extends Controller
      */
     public function collapseAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy("text", "ASC");
-        return $this->render(
-            ":tag:collapse_diary.html.twig",
-            [
-                'tags' => $tags
-            ]
-        );
+        $user = $this->getUser();
+        if ($user) {
+            $userId = $user->getId();
+
+            $em = $this->getDoctrine()->getManager();
+            $tags = $em->getRepository("AppBundle:Tag")->findAllByUserOrderBy($userId, "text", "ASC");
+            return $this->render(
+                ":tag:collapse_diary.html.twig",
+                [
+                    'tags' => $tags
+                ]
+            );
+        }
+        return $this->redirectToRoute('fos_user_security_login');
     }
 }

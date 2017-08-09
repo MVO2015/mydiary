@@ -13,9 +13,9 @@ use Doctrine\ORM\EntityRepository;
  */
 class TagRepository extends EntityRepository
 {
-    public function findAllOrderBy($orderBy='text', $sort='asc')
+    public function findAllByUserOrderBy($userId, $orderBy='text', $sort='asc')
     {
-        return $this->findBy(array(), array($orderBy => $sort));
+        return $this->findBy(['userId' => $userId], array($orderBy => $sort));
     }
 
     public function findAllAsChoiceArray()
@@ -27,5 +27,26 @@ class TagRepository extends EntityRepository
             $tagChoices[$tag->getText()]= $tag->getId();
         }
         return $tagChoices;
+    }
+
+    /**
+     * @param int $userId user id
+     */
+    public function findAllByUser($userId)
+    {
+        $qb = $this->createQueryBuilder('tag');
+        $q = $qb->where('tag.userId = :uid')
+            ->setParameter(':uid', $userId)
+            ->getQuery();
+        return $q->getResult();
+    }
+
+    public function findOneByUserAndText($userId, $text)
+    {
+        $qb = $this->createQueryBuilder('tag');
+        $q = $qb->where('tag.userId = :uid AND tag.text = :text')
+            ->setParameters([':uid' => $userId, ':text' => $text])
+            ->getQuery();
+        return $q->getResult();
     }
 }

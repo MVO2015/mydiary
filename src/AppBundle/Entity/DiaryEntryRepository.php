@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Symfony\Component\Validator\Constraints\All;
 
 /**
  * DiaryEntryRepository
@@ -22,17 +21,20 @@ class DiaryEntryRepository extends EntityRepository
 
     /**
      * Get all entries
+     * @param int $userId an user id
      * @param int $currentPage Current page number
      * @param int $limit Maximal number of records on one page
      * @param string $order Sort order
      * @return Paginator
      */
-    public function getAllEntries($currentPage = 1, $limit, $order="ASC")
+    public function getAllEntries($userId, $currentPage = 1, $limit, $order="ASC")
     {
         // Create our query
-        $query = $this->createQueryBuilder('diary_entry')
-        ->orderBy('diary_entry.dateTime', $order)
-        ->getQuery();
+        $qb = $this->createQueryBuilder('diary_entry')
+            ->where('diary_entry.userId = :uid')
+            ->setParameter(':uid', $userId)
+            ->orderBy('diary_entry.dateTime', $order);
+        $query = $qb->getQuery();
 
         // No need to manually get get the result ($query->getResult())
         $paginator = $this->paginate($query, $currentPage, $limit);

@@ -37,9 +37,14 @@ class DiaryController extends Controller
      */
     public function homeAction(Request $request)
     {
-        $this->get("app.logic")->init($request);
-        $em = $this->getDoctrine()->getManager();
-        $tags = $em->getRepository("AppBundle:Tag")->findAll();
+        $tags = [];
+        $user = $this->getUser();
+        if ($user) {
+            $userId = $user->getId();
+            $this->get("app.logic")->init($request);
+            $em = $this->getDoctrine()->getManager();
+            $tags = $em->getRepository("AppBundle:Tag")->findAllByUser($userId);
+        }
         return $this->render(":diary:home.html.twig", ['tags' => $tags]);
     }
 
@@ -120,10 +125,11 @@ class DiaryController extends Controller
     public function indexAction($page = 1)
     {
         $limit = 10;
+        $userId = $this->getUser()->getId();
         $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntryRepository $repository */
         $repository = $em->getRepository("AppBundle:DiaryEntry");
-        $diaryEntries = $repository->getAllEntries($page, $limit, "DESC");
+        $diaryEntries = $repository->getAllEntries($userId, $page, $limit, "DESC");
 
         // You can also call the count methods (check PHPDoc for `paginate()`)
         // $totalEntriesReturned = $diaryEntries->getIterator()->count();
@@ -170,10 +176,11 @@ class DiaryController extends Controller
     public function paginateAction(Request $request, $page = 1, $offset=0)
     {
         $limit = 999999;
+        $userId =$this->getUser()->getId();
         $em = $this->getDoctrine()->getManager();
         /** @var DiaryEntryRepository $diaryEntryRepository */
         $diaryEntryRepository = $em->getRepository("AppBundle:DiaryEntry");
-        $diaryEntries = $diaryEntryRepository->getAllEntries($page, $limit, "DESC");
+        $diaryEntries = $diaryEntryRepository->getAllEntries($userId, $page, $limit, "DESC");
 
         // You can also call the count methods (check PHPDoc for `paginate()`)
 //        $totalEntriesReturned = $diaryEntries->getIterator()->count();

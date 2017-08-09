@@ -34,6 +34,12 @@ class Tag
      */
     private $diaryEntries;
 
+    /**
+     * @var integer
+     * @ORM\Column(type="integer", name="user_id")
+     */
+    private $userId;
+
     public function __construct()
     {
         $this->diaryEntries = new ArrayCollection();
@@ -90,6 +96,22 @@ class Tag
     public function __toString()
     {
         return $this->getText();
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param int $userId
+     */
+    public function setUserId(int $userId)
+    {
+        $this->userId = $userId;
     }
 }
 

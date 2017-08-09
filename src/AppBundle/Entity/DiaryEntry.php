@@ -19,6 +19,12 @@ class DiaryEntry
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @var integer
+     * @ORM\Column(type="integer", name="user_id")
+     */
+    private $userId;
     /**
      * @ORM\Column(type="datetime")
      * @var DateTime
@@ -302,5 +308,21 @@ class DiaryEntry
     public function getTagsCollection()
     {
         return $this->getTags();
+    }
+
+    /**
+     * @return integer
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param integer $userId
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
     }
 }
