@@ -121,4 +121,14 @@ class DiaryEntryRepository extends EntityRepository
         $rowNum = array_search($id, $idArr['id']);
         return $rowNum;
     }
+
+    /**
+     * @param int $userId user id
+     * @param int $id diary entry id
+     * @return bool
+     */
+    public function findByUserAndId($userId, $id)
+    {
+        return $this->findBy(['userId' => $userId, 'id' => $id])[0] ?? false;
+    }
 }

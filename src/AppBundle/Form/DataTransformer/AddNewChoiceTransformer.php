@@ -3,16 +3,19 @@
 namespace AppBundle\Form\DataTransformer;
 
 use AppBundle\Entity\Tag;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 
 class AddNewChoiceTransformer implements DataTransformerInterface
 {
     private $em;
+    private $user;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, User $user)
     {
         $this->em = $em;
+        $this->user = $user;
     }
 
     /**
@@ -40,6 +43,7 @@ class AddNewChoiceTransformer implements DataTransformerInterface
             if (!is_numeric($item)) {
                 $newTag = new Tag();
                 $newTag->setText($item);
+                $newTag->setUserId($this->user->getId());
                 $this->em->persist($newTag);
                 $this->em->flush();
                 $sentData[$key] = $newTag->getId();

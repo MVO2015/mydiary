@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\Repository\TagRepository;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class TagController
@@ -32,14 +33,14 @@ class TagController extends Controller
      */
     public function indexAction(Request $request, $orderBy = "text", $sort = "asc")
     {
-        $tags = [];
         $user = $this->getUser();
         if ($user) {
             $userId = $user->getId();
             $em = $this->getDoctrine()->getManager();
             $tags = $em->getRepository("AppBundle:Tag")->findAllByUserOrderBy($userId, $orderBy, $sort);
+            return $this->render("tag/index.html.twig", ['tags' => $tags]);
         }
-        return $this->render("tag/index.html.twig", ['tags' => $tags]);
+        return $this->redirectToRoute('fos_user_security_login');
     }
 
     /**
@@ -50,40 +51,52 @@ class TagController extends Controller
      */
     public function editAction(Request $request, $id)
     {
-        $em = $this->getDoctrine()->getManager();
-        $tag = $em->getRepository("AppBundle:Tag")->find($id);
-        $form = $this->createForm(TagType::class, $tag);
-
-        // buttons
-        $form->add(
-            'update',
-            SubmitType::class,
-            [
-                'attr' => [
-                    'class' => "diarybtn"
-                ]
-            ]);
-
-        $form->handleRequest($request);
-
-        // submit form
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('update')->isClicked()) {
-                $tag = $form->getData();
-                $em->flush();
-                $this->addFlash(
-                    'success',
-                    'Your tag "' . $tag->getText() . '" has been updated!'
-                );
+        $user = $this->getUser();
+        if ($user) {
+            $userId = $user->getId();
+            $em = $this->getDoctrine()->getManager();
+            /** @var Tag $tag */
+            $tag = $em->getRepository("AppBundle:Tag")->findByUserAndId($userId, $id);
+            if (!$tag) {
+                return $this->redirectToRoute('homepage');
             }
-            return $this->redirectToRoute("tag_index");
+            $form = $this->createForm(TagType::class, $tag);
+
+            // buttons
+            $form->add(
+                'update',
+                SubmitType::class,
+                [
+                    'attr' => [
+                        'class' => "diarybtn"
+                    ]
+                ]);
+
+            $form->handleRequest($request);
+
+            // submit form
+            if ($form->isSubmitted() && $form->isValid()) {
+                if ($form->get('update')->isClicked()) {
+                    $tag = $form->getData();
+                    $tag->setUserId($userId);
+                    $em->flush();
+                    $this->addFlash(
+                        'success',
+                        'Your tag "' . $tag->getText() . '" has been updated!'
+                    );
+                }
+                return $this->redirectToRoute("tag_index");
+            }
+            if ($tag) {
+                return $this->render('tag/edit.html.twig', array(
+                    'form' => $form->createView(),
+                    'id' => $tag->getId(), // for Delete button
+                ));
+            } else {
+                return $this->redirectToRoute('homepage');
+            }
         }
-        if ($tag) {
-            return $this->render('tag/edit.html.twig', array(
-                'form' => $form->createView(),
-                'id' => $tag->getId(), // for Delete button
-            ));
-        }
+        return $this->redirectToRoute('fos_user_security_login');
     }
 
     /**
@@ -94,10 +107,13 @@ class TagController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-        if($this->deleteTag($id))
-        {
+        $user = $this->getUser();
+        if ($user) {
+            $userId = $user->getId();
+            $this->deleteTag($userId, $id);
             return $this->redirectToRoute("tag_index");
-        };
+        }
+        return $this->redirectToRoute('fos_user_security_login');
     }
 
     /**
@@ -108,10 +124,16 @@ class TagController extends Controller
      */
     public function deleteElementAction(Request $request, $id)
     {
-        if($this->deleteTag($id))
-        {
-            return $this->redirectToRoute("tag_new");
-        };
+        $user = $this->getUser();
+        if ($user) {
+            $userId = $user->getId();
+            if ($this->deleteTag($userId, $id)) {
+                return $this->redirectToRoute("tag_new");
+            } else {
+                return $this->redirectToRoute('homepage');
+            }
+        }
+        return $this->redirectToRoute('fos_user_security_login');
     }
 
     /**
@@ -128,20 +150,28 @@ class TagController extends Controller
      */
     public function collectionAction(Request $request, $orderBy = "text", $sort = "asc")
     {
-        $em = $this->getDoctrine()->getManager();
-        $tags = $em->getRepository("AppBundle:Tag")->findAllOrderBy($orderBy, $sort);
-        return $this->render("tag/collection.page.html.twig", ['tags' => $tags]);
+        $user = $this->getUser();
+        if ($user) {
+            $userId = $user->getId();
+            $em = $this->getDoctrine()->getManager();
+            $tags = $em->getRepository("AppBundle:Tag")->findAllByUserOrderBy($userId, $orderBy, $sort);
+            return $this->render("tag/collection.page.html.twig", ['tags' => $tags]);
+        } else {
+            return $this->$this->redirectToRoute();
+        }
     }
 
     /**
      * Delete tag from repository
-     * @param $id
+     * @param int $userId user id
+     * @param int $id tag id
      * @return bool True if success, otherwise false.
      */
-    private function deleteTag($id)
+    private function deleteTag($userId, $id)
     {
         $em = $this->getDoctrine()->getManager();
-        $tag = $em->getRepository("AppBundle:Tag")->find($id);
+        /** @var Tag $tag */
+        $tag = $em->getRepository("AppBundle:Tag")->findByUserAndId($userId, $id);
         if ($tag) {
             $em->remove($tag);
             $em->flush();
@@ -182,6 +212,7 @@ class TagController extends Controller
                     /** @var Tag $tagFromForm */
                     $tagFromForm =$form->getData();
                     if (!$em->getRepository("AppBundle:Tag")->findOneByUserAndText($userId, $tagFromForm->getText())) {
+                        $tagFromForm->setUserId($userId);
                         $em->persist($tagFromForm);
                         $em->flush();
                         $tags = $em->getRepository("AppBundle:Tag")->findAllByUserOrderBy($userId, $orderBy);

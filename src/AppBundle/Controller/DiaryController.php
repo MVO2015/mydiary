@@ -57,45 +57,49 @@ class DiaryController extends Controller
      */
     public function editAction(Request $request, $id=null)
     {
-        $em = $this->getDoctrine()->getManager();
-        /** @var DiaryEntry $diaryEntry */
-        if ($id) {
-            $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->find($id);
-        } else {
-            $diaryEntry = new DiaryEntry(
-                new DateTime("now", new DateTimeZone("Europe/Prague")), "", ""
-            );
-        }
-        $options = ['data_transformer' => new AddNewChoiceTransformer($em)];
-        $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry, $options);
+        $user = $this->getUser();
+        if ($user) {
+            $userId = $user->getId();
+            $em = $this->getDoctrine()->getManager();
+            /** @var DiaryEntry $diaryEntry */
+            if ($id) {
+                $diaryEntry = $em->getRepository("AppBundle:DiaryEntry")->findByUserAndId($userId, $id);
+            } else {
+                $diaryEntry = new DiaryEntry(
+                    new DateTime($userId,"now", new DateTimeZone("Europe/Prague")), "", ""
+                );
+            }
+            $options = ['data_transformer' => new AddNewChoiceTransformer($em, $user)];
+            $form = $this->createForm(BaseDiaryEntryType::class, $diaryEntry, $options);
 
-        $form->add(
-            'save',
-            SubmitType::class,
-            [
-                'attr' => [
-                    'class' => "diarybtn"
-                ]
-            ]);
+            $form->add(
+                'save',
+                SubmitType::class,
+                [
+                    'attr' => [
+                        'class' => "diarybtn"
+                    ]
+                ]);
 
-        $form->handleRequest($request);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('save')->isClicked()) {
-                if (!$id) {
-                    $em->persist($diaryEntry);
+            if ($form->isSubmitted() && $form->isValid()) {
+                if ($form->get('save')->isClicked()) {
+                    if (!$id) {
+                        $em->persist($diaryEntry);
+                    }
+                    $em->flush();
                 }
-                $em->flush();
+                return $this->redirectToRoute("index");
+            }
+            if ($diaryEntry) {
+                return $this->render('diary/edit.html.twig', array(
+                    'form' => $form->createView(),
+                    'shortNote' => $diaryEntry->getShort(),
+                ));
             }
             return $this->redirectToRoute("index");
         }
-        if ($diaryEntry) {
-            return $this->render('diary/edit.html.twig', array(
-                'form' => $form->createView(),
-                'shortNote' => $diaryEntry->getShort(),
-            ));
-        }
-        return $this->redirectToRoute("index");
     }
 
     /**

@@ -49,12 +49,14 @@ class DiaryEntry
 
     /**
      * DiaryEntry constructor.
+     * @param int $userId user id
      * @param string $dateTime
      * @param string $note
      * @param string $category
      */
-    public function __construct($dateTime, $note, $category)
+    public function __construct($userId, $dateTime, $note, $category)
     {
+        $this->userId = $userId;
         $this->dateTime = $dateTime;
         $this->note = $note;
         $this->category = $category;

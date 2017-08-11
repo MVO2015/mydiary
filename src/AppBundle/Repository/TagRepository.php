@@ -18,6 +18,11 @@ class TagRepository extends EntityRepository
         return $this->findBy(['userId' => $userId], array($orderBy => $sort));
     }
 
+    public function findByUserAndId($userId, $id)
+    {
+        return $this->findBy(['userId' => $userId, 'id' => $id])[0] ?? false;
+    }
+
     public function findAllAsChoiceArray()
     {
         $tags = $this->findBy(array(), array("id" => 'asc'));
